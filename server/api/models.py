@@ -21,6 +21,7 @@ class Member(models.Model):
      is_moderator = models.BooleanField(default=False)
      is_reviewer = models.BooleanField(default=False)
      is_student = models.BooleanField(default=True)
+     score = models.SmallIntegerField(default=0)
      def __str__(self):
           return self.member
      

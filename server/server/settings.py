@@ -42,26 +42,26 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
-     'rest_framework',
-     "django.contrib.sites",
-     'allauth',
-     'allauth.account',
-     'allauth.socialaccount',
-     'allauth.socialaccount.providers.google'
+    'rest_framework',
+    "django.contrib.sites",
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google'
 
 ]
 
-SOCIALACCOUNT_PROVIDERS ={
-    "google":{
-        "SCOPE":[
-            "profile",
-            "email"
-        ],
-        "AUTH_PARAMS":{
-            "access_type":"online",
-        }
-    }
-}
+# SOCIALACCOUNT_PROVIDERS ={
+#     "google":{
+#         "SCOPE":[
+#             "profile",
+#             "email"
+#         ],
+#         "AUTH_PARAMS":{
+#             "access_type":"online",
+#         }
+#     }
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',
    
 ]
 
@@ -98,13 +98,15 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+Name = os.getenv('NAME')
+User = os.getenv('USER')
+Password = os.getenv('PASSWORD')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': str(os.getenv('NAME')),
-        'USER': str(os.getenv('USER')),
-        'PASSWORD': str(os.getenv('PASSWORD')),
+        'NAME': os.getenv('NAME'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
         'HOST':'localhost',
         'PORT':'5432',
     }
