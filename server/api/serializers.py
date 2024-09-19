@@ -5,13 +5,13 @@ from .models import User,  Channels, Member, Assignments, Task, Group, Group_sub
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['user_id','username','password','email','bio','avatar']
+        fields = ['userid','username','password','email','bio','avatar']
 
 class ChannelSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     class Meta:
         model = Channels
-        fields =['channel_id','channelName','created_by','created_at']
+        fields =['channelid','channelName','created_by','created_at']
 
 class MemberSerializer(serializers.ModelSerializer):
     member = UserSerializer(read_only =True)
@@ -19,7 +19,7 @@ class MemberSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Member
-        fields = ['member_id','memberName','channel_id','is_moderator','is_reviewer','is_student']
+        fields = ['memberid','memberName','channel_id','is_moderator','is_reviewer','is_student']
 
 class AssignmentSerializer(serializers.ModelSerializer):
     creator_id = MemberSerializer(read_only=True)
@@ -27,7 +27,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignments
-        fields = ['assignment_id','creator_id','title','description','created_at','deadline','attachments','fellow_reviewers','is_individual','students']
+        fields = ['assignment_id','creator_id','title','description','created_at','deadline','attachments','fellow_reviewers','is_individual']
 
 class GroupSerializer:
     assignment_id = AssignmentSerializer(read_only=True)
@@ -44,7 +44,7 @@ class TaskSerializer:
         model = Task
         fields = ['task_id','assignment_id','title','description','deadline','attachments','score']
 
-class GroupSubmSerializer:
+class SubmSerializer:
     group_id = GroupSerializer(read_only=True)
     task_id = TaskSerializer(read_only=True)
 
@@ -53,12 +53,12 @@ class GroupSubmSerializer:
         fields = ['submit_id','attachment','status','submit_date','group_id','task_id','score']
 
 class CommentSerializer:
-    submit_id = GroupSubmSerializer(read_only=True)
+    submit_id = SubmSerializer(read_only=True)
     reviewer_id = MemberSerializer(read_only=True)
 
     class Meta:
         model = Comments
-        fields = ['comment_id','comment','submit_id','reviewer_id','reviewed_date']
+        fields = ['c_id','comment','submit_id','reviewer_id','reviewed_date']
 
 
 
