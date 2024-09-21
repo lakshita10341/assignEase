@@ -7,7 +7,7 @@ import uuid
 class User(AbstractUser):
     userid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     email = models.EmailField(unique='True', max_length=254)
-    avatar = models.ImageField(upload_to='assignments/avatars')
+    avatar = models.ImageField(upload_to='assignments/avatars',null = True)
     bio = models.TextField(null=True, blank =True)
     
 

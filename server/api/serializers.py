@@ -1,20 +1,35 @@
 
 from rest_framework import serializers
-from .models import User,  Channels, Member, Assignments, Task, Group, Group_submission, Comments
+from .models import User,  Channels, Member, Assignments, Task, Group, Submission, Comments
 
-class UserSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['userid','username','password','email','bio','avatar']
+       
+        
+        def create(self,validated_data):
+            print("Creating instance with data:", validated_data)
+            password = validated_data.pop('password',None)
+            user = self.Meta.model(**validated_data) 
+            user.is_active = True
+            if password is not None:
+                
+                user.set_password(password)
+            else:
+                print("Password is none")
+            user.save()
+            return user  
+
 
 class ChannelSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = RegisterSerializer(read_only=True)
     class Meta:
         model = Channels
         fields =['channelid','channelName','created_by','created_at']
 
 class MemberSerializer(serializers.ModelSerializer):
-    member = UserSerializer(read_only =True)
+    member = RegisterSerializer(read_only =True)
     channel_id = ChannelSerializer(read_only =True)
     
     class Meta:
@@ -45,16 +60,16 @@ class TaskSerializer:
         fields = ['task_id','assignment_id','title','description','deadline','attachments','score']
 
 class SubmSerializer:
-    group_id = GroupSerializer(read_only=True)
-    task_id = TaskSerializer(read_only=True)
+    group_id = GroupSerializer()
+    task_id = TaskSerializer()
 
     class Meta:
-        model = Group_submission
+        model = Submission
         fields = ['submit_id','attachment','status','submit_date','group_id','task_id','score']
 
 class CommentSerializer:
-    submit_id = SubmSerializer(read_only=True)
-    reviewer_id = MemberSerializer(read_only=True)
+    submit_id = SubmSerializer()
+    reviewer_id = MemberSerializer()
 
     class Meta:
         model = Comments
