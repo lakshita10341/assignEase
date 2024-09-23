@@ -1,25 +1,40 @@
 
 from rest_framework import serializers
-from .models import User,  Channels, Member, Assignments, Task, Group, Group_submission, Comments
+from .models import User,  Channels, Member, Assignments, Task, Group, Submission, Comments
 
-class UserSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['user_id','username','password','email','bio','avatar']
+        fields = ['userid','username','password','email','bio','avatar']
+       
+        
+        def create(self,validated_data):
+            print("Creating instance with data:", validated_data)
+            password = validated_data.pop('password',None)
+            user = self.Meta.model(**validated_data) 
+            user.is_active = True
+            if password is not None:
+                
+                user.set_password(password)
+            else:
+                print("Password is none")
+            user.save()
+            return user  
+
 
 class ChannelSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = RegisterSerializer(read_only=True)
     class Meta:
         model = Channels
-        fields =['channel_id','channelName','created_by','created_at']
+        fields =['channelid','channelName','created_by','created_at']
 
 class MemberSerializer(serializers.ModelSerializer):
-    member = UserSerializer(read_only =True)
+    member = RegisterSerializer(read_only =True)
     channel_id = ChannelSerializer(read_only =True)
     
     class Meta:
         model = Member
-        fields = ['member_id','memberName','channel_id','is_moderator','is_reviewer','is_student']
+        fields = ['memberid','memberName','channel_id','is_moderator','is_reviewer','is_student']
 
 class AssignmentSerializer(serializers.ModelSerializer):
     creator_id = MemberSerializer(read_only=True)
@@ -27,7 +42,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignments
-        fields = ['assignment_id','creator_id','title','description','created_at','deadline','attachments','fellow_reviewers','is_individual','students']
+        fields = ['assignment_id','creator_id','title','description','created_at','deadline','attachments','fellow_reviewers','is_individual']
 
 class GroupSerializer:
     assignment_id = AssignmentSerializer(read_only=True)
@@ -44,21 +59,21 @@ class TaskSerializer:
         model = Task
         fields = ['task_id','assignment_id','title','description','deadline','attachments','score']
 
-class GroupSubmSerializer:
-    group_id = GroupSerializer(read_only=True)
-    task_id = TaskSerializer(read_only=True)
+class SubmSerializer:
+    group_id = GroupSerializer()
+    task_id = TaskSerializer()
 
     class Meta:
-        model = Group_submission
+        model = Submission
         fields = ['submit_id','attachment','status','submit_date','group_id','task_id','score']
 
 class CommentSerializer:
-    submit_id = GroupSubmSerializer(read_only=True)
-    reviewer_id = MemberSerializer(read_only=True)
+    submit_id = SubmSerializer()
+    reviewer_id = MemberSerializer()
 
     class Meta:
         model = Comments
-        fields = ['comment_id','comment','submit_id','reviewer_id','reviewed_date']
+        fields = ['c_id','comment','submit_id','reviewer_id','reviewed_date']
 
 
 
