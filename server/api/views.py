@@ -13,7 +13,7 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-class CreateChannelView():
+class CreateChannelView(generics.CreateAPIView):
     queryset = Channels.objects.all()
     serializer_class = ChannelSerializer
     permission_classes = [AllowAny]

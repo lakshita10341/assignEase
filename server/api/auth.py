@@ -48,14 +48,17 @@ def getOAuthTokens(request):
                 refresh_token = response_data.get('refresh_token')
                 print(access_token),
                 header = {
-                "Authorization":  f"Bearer {access_token}",
+                "Authorization":  f'Bearer {access_token}',
                 }
 
                 getData = requests.get(url=getUserDataURL, headers = header)
                 print(getData.status_code)
                 data = getData.json()
+                print(data)
                 username = data.get('username')
-                email = data.get('contactInformation',{}).get('email')
+                email = data.get('contactInformation',{}).get('emailAddress')
+                print(username)
+                print(email)
                 
                 if User.objects.filter(email=email).exists():
                      print('User already exists')
@@ -63,18 +66,29 @@ def getOAuthTokens(request):
                     
                 
                 else:
-                     refresh = RefreshToken.for_user(user)
-                     tokens = {
-                      'refresh': str(refresh),
-                       'access': str(refresh.access_token)
-                        }
-                     user = User.objects.create(username= username, email = email, access = tokens['access'], refresh = tokens['refresh'])
-                     user.save()
+                    print('creating user')
+                    try:
+                    
+                        user = User.objects.create(username= username, email = email)
 
+                        print(user)
+                        user.save()
+
+                        refresh = RefreshToken.for_user(user)
+                        tokens = {
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                             }
+                        print(tokens)
+                        user.access = tokens['access']
+                        user.refresh = tokens['refresh']
+                        user.save()
+                        print('yes')
+                        return user
+                    except Exception as e:
+                            print(f"Error occurred: {e}")
                 
-                
-                
-                return user    
+                  
                
             except ValueError as e:
                 print(f"Error decoding JSON: {e}")
