@@ -5,9 +5,8 @@ from .models import User,  Channels, Member, Assignments, Task, Group, Submissio
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username','fullname','password','email','bio','avatar']
-       
-        
+        fields = ['id','username','password','email','bio','avatar']
+               
     def create(self,validated_data):
         print("Creating instance with data:", validated_data)
         password = validated_data.pop('password',None)
@@ -23,12 +22,21 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ChannelSerializer(serializers.ModelSerializer):
-    created_by = RegisterSerializer(read_only=True)
+    #created_by = RegisterSerializer(read_only = True)
     class Meta:
         model = Channels
-        fields =['channelid','channelName','created_by','created_at']
+        fields =['channelName']
+       
     
-    # def create(self,validated_data):
+    def create(self,validated_data):
+        user = self.context['request'].user
+        channel = Channels.objects.create(
+            channelName = validated_data.get('channelName'),
+            created_by = user,
+        )
+        channel.save()
+        print('done')
+        return channel
 
 
 class MemberSerializer(serializers.ModelSerializer):
