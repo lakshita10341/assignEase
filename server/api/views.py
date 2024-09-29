@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import logout
-from .models import User, Channels
+from .models import User, Channels, Member
 from rest_framework import generics,status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from django.db.models import Q
 
-from .serializers import RegisterSerializer, ChannelSerializer
+from .serializers import RegisterSerializer, ChannelSerializer, MemberSerializer
 
 # Create your views here.
 class CreateUserView(generics.CreateAPIView):
@@ -18,22 +19,16 @@ class CreateChannelView(generics.CreateAPIView):
     serializer_class = ChannelSerializer
     permission_classes = [IsAuthenticated]
 
-  
+class GetChannelView(generics.ListAPIView):
+    serializer_class = ChannelSerializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        created_channels = Channels.objects.filter(created_by=self.request.user)
+      
+        return created_channels
 
-    
-
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         print("YO YO")
-#         if serializer.is_valid():
-#             self.perform_create(serializer)  # Saves the instance
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# # def home(request):
-#     return render(request, "index.html")
-
-# def logout_view(request):
-#     logout(request)
-#     return redirect('/')
+class AddMembersView(generics.CreateAPIView):
+    queryset=Member.objects.all()
+    serializer_class = MemberSerializer
+    permission_classes=[IsAuthenticated]
     

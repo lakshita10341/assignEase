@@ -1,5 +1,6 @@
 
-from rest_framework import serializers
+from requests import Response
+from rest_framework import serializers, status
 from .models import User,  Channels, Member, Assignments, Task, Group, Submission, Comments
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -38,14 +39,46 @@ class ChannelSerializer(serializers.ModelSerializer):
         print('done')
         return channel
 
+class MemberDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ['memberName', 'is_moderator','is_reviewer']
 
 class MemberSerializer(serializers.ModelSerializer):
-    member = RegisterSerializer(read_only =True)
+    membersData = MemberDataSerializer(many=True, write_only=True)
     channel_id = ChannelSerializer(read_only =True)
     
     class Meta:
         model = Member
-        fields = ['memberid','memberName','channel_id','is_moderator','is_reviewer','is_student']
+        fields = ['membersData','channel_id']
+    
+    def create(self,validated_data):
+        channel = validated_data.get('channel_id')
+        membersData = validated_data.get('membersData')
+
+        for memberData in membersData:
+            user = memberData.get('userid')
+            try:
+                user = User.objects.filter(id=user)
+                member = Member.objects.create(
+                    memberName = user,
+                    channel_id = channel,
+                    is_reviewer = membersData.get('is_reviewer'),
+                    is_moderator = memberData.get('is_moderator'),
+                    )
+            except Exception as e:
+                print('error')
+                return (f"Error occured {e}")
+        return Response(
+            {
+                "message":"Members added successfully",
+            },
+            status = status.HTTP_201_created
+        )
+
+
+
+
 
 class AssignmentSerializer(serializers.ModelSerializer):
     creator_id = MemberSerializer(read_only=True)
