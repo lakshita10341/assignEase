@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import logout
-from .models import User
+from .models import User, Channels
 from rest_framework import generics,status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ChannelSerializer
 
 # Create your views here.
 class CreateUserView(generics.CreateAPIView):
@@ -13,7 +13,13 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-    
+class CreateChannelView():
+    queryset = Channels.objects.all()
+    serializer_class = ChannelSerializer
+    permission_classes = [AllowAny]
+
+
+
     
 
 #     def create(self, request, *args, **kwargs):
