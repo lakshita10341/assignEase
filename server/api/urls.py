@@ -7,7 +7,8 @@ urlpatterns =[
     path('oauth/getToken/', auth.getOAuthTokens, name = 'getToken'),
     path('createChannels/',views.CreateChannelView.as_view(),name='channels'),
     path('getChannels/',views.GetChannelView.as_view(),name='getChannel'),
-    path('addMembers/',views.AddMembersView.as_view(), name="addMember")
-
+    path('addMembers/',views.AddMembersView.as_view(), name="addMember"),
+    path('getUsers/', views.GetUserView.as_view(), name = "getUser"),
+    path('getMembers/',views.GetMemberView.as_view(), name='getMembers')
   
 ]

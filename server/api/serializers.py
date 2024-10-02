@@ -1,4 +1,5 @@
 
+from django.forms import ValidationError
 from requests import Response
 from rest_framework import serializers, status
 from .models import User,  Channels, Member, Assignments, Task, Group, Submission, Comments
@@ -7,6 +8,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username','password','email','bio','avatar']
+
+        extra_kwargs = {
+            'password': {'write_only':True},
+            'id':{'read_only':True}
+        }
                
     def create(self,validated_data):
         print("Creating instance with data:", validated_data)
@@ -40,45 +46,53 @@ class ChannelSerializer(serializers.ModelSerializer):
         return channel
 
 class MemberDataSerializer(serializers.ModelSerializer):
+    memberName = serializers.UUIDField()
     class Meta:
         model = Member
-        fields = ['memberName', 'is_moderator','is_reviewer']
+        fields = ['memberName', 'is_moderator', 'is_reviewer']
+
 
 class MemberSerializer(serializers.ModelSerializer):
     membersData = MemberDataSerializer(many=True, write_only=True)
-    channel_id = ChannelSerializer(read_only =True)
-    
+    channel_id = serializers.UUIDField()
+
     class Meta:
         model = Member
-        fields = ['membersData','channel_id']
-    
-    def create(self,validated_data):
-        channel = validated_data.get('channel_id')
+        fields = ['membersData', 'channel_id', 'memberid']
+        extra_kwargs = {
+            'memberid': {"read_only": True},
+        }
+
+    def create(self, validated_data):
+        channel_id = validated_data.get('channel_id')
         membersData = validated_data.get('membersData')
+        print(f"Received channel_id: {channel_id}")
+        print(f"Received membersData: {membersData}")
+        members = []
 
-        for memberData in membersData:
-            user = memberData.get('userid')
-            try:
-                user = User.objects.filter(id=user)
-                member = Member.objects.create(
-                    memberName = user,
-                    channel_id = channel,
-                    is_reviewer = membersData.get('is_reviewer'),
-                    is_moderator = memberData.get('is_moderator'),
+        try:
+   
+            channel = Channels.objects.get(channelid=channel_id)
+
+            for memberData in membersData:
+                user_id = memberData.get('memberName')
+                try:
+                    user = User.objects.get(id=user_id)
+                    member = Member.objects.create(
+                        memberName=user,
+                        channel_id=channel,
+                        is_reviewer=memberData.get('is_reviewer'),  
+                        is_moderator=memberData.get('is_moderator')  
                     )
-            except Exception as e:
-                print('error')
-                return (f"Error occured {e}")
-        return Response(
-            {
-                "message":"Members added successfully",
-            },
-            status = status.HTTP_201_created
-        )
+                    members.append(member)
+                except User.DoesNotExist:
+                    raise ValidationError({'memberName': [f'User with ID {user_id} does not exist.']})
+                except Exception as e:
+                    raise ValidationError({'error': str(e)})
+        except Channels.DoesNotExist:
+             raise ValidationError({'channel_id': [f'Channel with ID {channel_id} does not exist.']})
 
-
-
-
+        return members
 
 class AssignmentSerializer(serializers.ModelSerializer):
     creator_id = MemberSerializer(read_only=True)
