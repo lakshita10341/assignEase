@@ -1,4 +1,5 @@
 
+from typing import Required
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
@@ -36,13 +37,13 @@ class Member(models.Model):
           return self.memberName
      
 class Assignments(models.Model):
-     assignment_id = models.IntegerField(primary_key=True)
+     assignment_id = models.AutoField(primary_key=True)
      creator_id = models.ForeignKey(Member,null=True, on_delete=models.SET_NULL)
      title = models.CharField()
      description = models.TextField()
      created_at = models.DateTimeField(auto_now_add=True)
      deadline = models.DateField()
-     attachments = models.FileField(upload_to='assignment_attachments/')
+     attachments = models.FileField(upload_to='assignment_attachments/', null=True)
      is_individual = models.BooleanField(default=True)
      reviewers_id = models.ManyToManyField(Member, related_name='assignment_reviewers')
      channel_id = models.ForeignKey(Channels,on_delete=models.CASCADE)
@@ -50,7 +51,7 @@ class Assignments(models.Model):
           return self.title
      
 class Task(models.Model):
-     task_id = models.IntegerField(primary_key=True)
+     task_id = models.AutoField(primary_key=True)
      assignment_id = models.ForeignKey(Assignments, on_delete=models.CASCADE)
      taskTitle = models.CharField()
      description = models.TextField()
@@ -61,7 +62,7 @@ class Task(models.Model):
           return self.taskTitle
      
 class Group(models.Model):
-     group_id = models.IntegerField(primary_key=True)
+     group_id = models.AutoField(primary_key=True)
      assignment_id = models.ForeignKey(Assignments,on_delete=models.CASCADE)
      student_id = models.ManyToManyField(Member,related_name='group_students')
      score = models.IntegerField(default = 0)
