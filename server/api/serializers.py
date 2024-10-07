@@ -94,13 +94,6 @@ class MemberSerializer(serializers.ModelSerializer):
 
         return members
 
-class GroupSerializer:
-    #assignment_id = AssignmentSerializer(read_only=True)
-    student_id = MemberSerializer(read_only=True)
-
-    class Meta:
-        model = Group
-        fields = ['group_id','assignment_id','student_id']
 
 class TaskSerializer:
     #assignment_id = AssignmentSerializer(read_only=True)
@@ -110,7 +103,7 @@ class TaskSerializer:
         fields = ['task_id','assignment_id','title','description','deadline','attachments','score']
 
 class SubmSerializer:
-    group_id = GroupSerializer()
+    # group_id = GroupSerializer()
     task_id = TaskSerializer()
 
     class Meta:

@@ -4,6 +4,7 @@ from .models import Member, Channels
 class IsModeratorOrCreator(BasePermission):
     def has_permission(self, request, view):
         channel_id = request.data.get('channel_id')
+        print(request)
         if not channel_id:
             return False
         try:
@@ -13,7 +14,7 @@ class IsModeratorOrCreator(BasePermission):
         
         if channel.created_by == request.memberName:
             return True
-        
+    
         try:
             member = Member.objects.get(memberName=request.User, channel_id=channel)
             return member.is_moderator
@@ -23,6 +24,7 @@ class IsModeratorOrCreator(BasePermission):
 
 class IsReviewer(BasePermission):
     def has_permission(self, request, view):
+        print(request.data)
         channel_id=request.data.get('channel_id')
         creator_id = request.data.get('creator_id')
         try:

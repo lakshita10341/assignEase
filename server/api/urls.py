@@ -12,6 +12,7 @@ urlpatterns =[
     path('getUsers/', views.GetUserView.as_view(), name = "getUser"),
     path('getMembers/',views.GetMemberView.as_view(), name='getMembers'),
     # path('getReviewers/',assignmentViews.GetReviewers.as_view(), name='getReviewers'),
-   path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment')
+   path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment'),
+   path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents')
   
 ]
