@@ -7,11 +7,12 @@ from .models import User,  Channels, Member, Assignments, Task, Group, Submissio
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username','password','email','bio','avatar']
+        fields = ['id','username','password','email']
 
         extra_kwargs = {
             'password': {'write_only':True},
             'id':{'read_only':True}
+
         }
                
     def create(self,validated_data):
@@ -32,7 +33,10 @@ class ChannelSerializer(serializers.ModelSerializer):
     #created_by = RegisterSerializer(read_only = True)
     class Meta:
         model = Channels
-        fields =['channelName']
+        fields =['channelid','channelName']
+        extra_kwargs = {
+            'channelid':{'read_only':True}
+        }
        
     
     def create(self,validated_data):

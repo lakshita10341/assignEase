@@ -14,6 +14,14 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("Errors: ", serializer.errors)  # Print errors for debugging
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CreateChannelView(generics.CreateAPIView):
     queryset = Channels.objects.all()
@@ -25,8 +33,10 @@ class GetChannelView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         created_channels = Channels.objects.filter(created_by=self.request.user)
-      
-        return created_channels
+        member_channels = Channels.objects.filter(member__memberName = self.request.user)
+        channels = created_channels | member_channels
+        print(created_channels)
+        return channels
 
 
 class AddMembersView(generics.CreateAPIView):

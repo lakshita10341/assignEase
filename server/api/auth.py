@@ -55,8 +55,9 @@ def getOAuthTokens(request):
                 print(getData.status_code)
                 data = getData.json()
                 print(data)
-                username = data.get('username')
+               
                 email = data.get('contactInformation',{}).get('emailAddress')
+                username = email.split('@')[0]
                 print(username)
                 print(email)
                 
