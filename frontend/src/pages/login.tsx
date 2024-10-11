@@ -1,26 +1,28 @@
 import React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Cookies from 'js-cookie'
 import {
     Card,
     CardContent,
     CardTitle,
   } from "@/components/ui/card"
-  import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import imglogo from "../components/imglogo.svg"
 import google from "../components/google.webp"
-  import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import axios from "axios"
-
-import { loginRoute } from "@/routes/route"  
+import type {AppDispatch, RootState} from '@/redux/store'
+import { useDispatch, useSelector } from "react-redux"
 import LoginRegister from '@/components/loginRegister'
+import { userLogin } from "@/features/thunks/userAuth"
 
 const Login : React.FC=()=>{
     const [username, setUsername] = useState('')
     const [password,setPassword] = useState('')
     const [formError, setFormError] = useState('')
+    const dispatch: AppDispatch = useDispatch();
+const {loading, error} = useSelector((state: RootState)=> state.userReducer);
+
     const navigate = useNavigate();
     const handleSubmit = async(e: React.FormEvent)=>{
         e.preventDefault();
@@ -37,10 +39,8 @@ const Login : React.FC=()=>{
         }
       
             try{
-              const {data} = await axios.post(loginRoute, loginData)
-              Cookies.set('access_token',data.access,{expires:7}),
-              Cookies.set('refresh_token',data.refresh,{expires:7}),
-              console.log(Cookies.get('access_token'))
+            const resultAction = await dispatch(userLogin(loginData)).unwrap();
+            console.log(resultAction)
               navigate('/')
       
             }catch(error:any){
@@ -65,6 +65,7 @@ const Login : React.FC=()=>{
   <CardContent>
     <form onSubmit={handleSubmit}>
      {formError && (<div className="text-red-500">{formError}</div>)}
+     {error && (<div className="text-red-500">{error}</div>)}
   <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="Username" className="text-right">
@@ -81,7 +82,7 @@ const Login : React.FC=()=>{
             <Input id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="col-span-3" />
           </div>
          
-        <Button type='submit' >Create</Button>
+        <Button type='submit' disabled={loading} >Create</Button>
      
         </form>
         <div>

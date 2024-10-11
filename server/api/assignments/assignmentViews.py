@@ -1,9 +1,9 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsReviewer
+from ..permissions import IsReviewer
 
 from .assignmentSerializer import AddAssignmentSerializer, GroupsSerializer
-from .models import Assignments, Group
+from ..models import Assignments, Group
 
 class CreateAssignmentView(generics.CreateAPIView):
     queryset = Assignments.objects.all()

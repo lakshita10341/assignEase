@@ -1,8 +1,8 @@
 from xml.dom import ValidationErr
 from requests import Response
 from rest_framework import serializers
-from .models import Assignments, Group, Member
-from .serializers import MemberSerializer
+from ..models import Assignments, Group, Member
+from ..serializers import MemberSerializer
 
 class AddAssignmentSerializer(serializers.ModelSerializer):
     attachments = serializers.FileField(

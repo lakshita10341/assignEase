@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from . import auth
-from . import assignmentViews
+from .assignments import assignmentViews
 urlpatterns =[
     path('user/register/',views.CreateUserView.as_view(),name='register'),
     path('oauth/',auth.getOAuthUser,name ='oauthRegister'),

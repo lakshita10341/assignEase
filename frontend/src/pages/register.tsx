@@ -1,7 +1,9 @@
 import React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Cookies from 'js-cookie'
+import type {AppDispatch, RootState} from '@/redux/store'
+import { useDispatch, useSelector } from "react-redux"
+
 import {
     Card,
     CardContent,
@@ -12,9 +14,9 @@ import imglogo from "../components/imglogo.svg"
 import google from "../components/google.webp"
   import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import axios from "axios"
-import { registerRoute, loginRoute } from "@/routes/route"  
+
 import LoginRegister from "@/components/loginRegister"
+import { registerUser } from "@/features/thunks/userAuth"
 
 const Register : React.FC=()=>{
 const [username, setUsername] = useState('')
@@ -23,6 +25,8 @@ const [password,setPassword] = useState('')
 const [confirmPassword, setConfirmPassword] = useState('')
 const [formError, setFormError] = useState('')
 const navigate = useNavigate();
+const dispatch: AppDispatch = useDispatch();
+const {loading, error} = useSelector((state: RootState)=> state.userReducer);
 
 const handleSubmit =async(e:React.FormEvent)=>{
   e.preventDefault();
@@ -40,40 +44,14 @@ const handleSubmit =async(e:React.FormEvent)=>{
     email,
     
   };
-  const loginData = {
-    username,
-    password,
-  }
   try{
-    console.log("Form data: ", formData);  // Log form data to check
-    const res = await axios.post(registerRoute, formData, {
-      headers: {
-        'Content-Type': 'application/json',  // Ensure JSON content type
-      }
-    });
-    if(res.status === 201){
-
-      console.log("User registered successfully")
-      try{
-        const {data} = await axios.post(loginRoute, loginData)
-        Cookies.set('access_token',data.access,{expires:7}),
-        Cookies.set('refresh_token',data.refresh,{expires:7}),
-        console.log(Cookies.get('access_token'))
-        navigate('/')
-
-      }catch(error:any){
-        console.log("error in token fetch: ", error.message)
-      }
-
-    }else{
-      
-      setFormError("Registration failed")
-
-    }
+    const resultAction  = await dispatch(registerUser(formData)).unwrap();
+     console.log(resultAction)
+      navigate('/');
+    
   }catch(err){
-    setFormError("Registration failed")
+    console.error('Failed to register user',err);
   }
-
  
 }
 
@@ -93,6 +71,7 @@ const loginWithChanneli = async()=>{
   <CardContent>
     <form onSubmit={handleSubmit}>
      {formError && (<div className="text-red-500">{formError}</div>)}
+      {error && (<div className="text-red-500">{error}</div>)}
   <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="Username" className="text-right">
@@ -119,7 +98,7 @@ const loginWithChanneli = async()=>{
             <Input id="confirmpassword" value={confirmPassword}  onChange={(e) => setConfirmPassword(e.target.value)} className="col-span-3" />
           </div>
         </div>
-        <Button type='submit' >Create</Button>
+        <Button type='submit' disabled={loading}>Create</Button>
       
         </form>
         <div>
