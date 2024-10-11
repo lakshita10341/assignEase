@@ -11,6 +11,7 @@ urlpatterns =[
     path('addMembers/',views.AddMembersView.as_view(), name="addMember"),
     path('getUsers/', views.GetUserView.as_view(), name = "getUser"),
     path('getMembers/',views.GetMemberView.as_view(), name='getMembers'),
+    path('getProfile/', views.GetProfile.as_view(), name='getProfile'),
     # path('getReviewers/',assignmentViews.GetReviewers.as_view(), name='getReviewers'),
    path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment'),
    path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents')

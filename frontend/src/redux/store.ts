@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from '@/features/slices/userSlice'
+import channelsReducer from '@/features/slices/channelSlice'
+import profileReducer from '@/features/slices/profileSlice'
 
 
 export const store = configureStore({
-  reducer: {userReducer} ,
+  reducer: {
+    userReducer,
+    channels : channelsReducer,
+    profile : profileReducer,
+  } ,
 })
 
 export type RootState = ReturnType<typeof store.getState>

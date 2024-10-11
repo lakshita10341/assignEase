@@ -27,6 +27,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             print("Password is none")
         user.save()
         return user  
+    
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'bio', 'avatar'] 
 
 
 class ChannelSerializer(serializers.ModelSerializer):
