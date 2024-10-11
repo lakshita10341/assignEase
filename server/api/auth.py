@@ -62,8 +62,10 @@ def getOAuthTokens(request):
                 print(email)
                 
                 if User.objects.filter(email=email).exists():
+                     user = User.objects.get(email=email)
                      print('User already exists')
-                     return user
+                    #  print(user.access)
+                    #  return user
                     
                 
                 else:
@@ -71,25 +73,26 @@ def getOAuthTokens(request):
                     try:
                     
                         user = User.objects.create(username= username, email = email)
-
+                        
                         print(user)
                         user.save()
 
-                        refresh = RefreshToken.for_user(user)
-                        tokens = {
+                        
+                        
+                    except Exception as e:
+                            print(f"Error occurred: {e}")
+                refresh = RefreshToken.for_user(user)
+                tokens = {
                         'refresh': str(refresh),
                         'access': str(refresh.access_token),
                              }
-                        print(tokens)
-                        user.access = tokens['access']
-                        user.refresh = tokens['refresh']
-                        user.save()
-                        print('yes')
-                        return user
-                    except Exception as e:
-                            print(f"Error occurred: {e}")
-                
-                  
+                print(tokens)
+                user.access = tokens['access']
+                user.refresh = tokens['refresh']
+                print(user.access)
+                user.save()
+
+                return redirect(f'http://localhost:5173/oauth/callback?access={tokens['access']}&refresh={tokens['refresh']}') 
                
             except ValueError as e:
                 print(f"Error decoding JSON: {e}")

@@ -76,6 +76,12 @@ const handleSubmit =async(e:React.FormEvent)=>{
 
  
 }
+
+const loginWithChanneli = async()=>{
+  console.log("Button pressed")
+  window.location.href = "http://127.0.0.1:8000/api/oauth/"
+
+}
     return(
         <>
         <div className="bg-gray-300 flex flex-row items-center w-screen">
@@ -114,17 +120,18 @@ const handleSubmit =async(e:React.FormEvent)=>{
           </div>
         </div>
         <Button type='submit' >Create</Button>
+      
+        </form>
         <div>
         <Button variant={"outline"} className="flex item-center rounded-md px-4 py-2">
             <img src={google} className="w-6 h-6 mr-2" alt='logo'/>
             <span className="text-sm font-medium">Sign in with Google</span>
           </Button>
-          <Button variant={"outline"} className="flex item-center rounded-md px-4 py-2">
+          <Button variant={"outline"} onClick={loginWithChanneli}  className="flex item-center rounded-md px-4 py-2">
             <img src={imglogo} className="w-6 h-6 mr-2" alt='logo'/>
             <span className="text-sm font-medium">Sign in with Channeli</span>
           </Button>
         </div>
-        </form>
   </CardContent>
 
 </Card>

@@ -13,6 +13,7 @@ import google from "../components/google.webp"
   import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import axios from "axios"
+
 import { loginRoute } from "@/routes/route"  
 import LoginRegister from '@/components/loginRegister'
 
@@ -45,11 +46,12 @@ const Login : React.FC=()=>{
             }catch(error:any){
               setFormError(error.message)
             }
-      
-          
-      
-      
-       
+    }
+
+    const loginWithChanneli = async()=>{
+      console.log("Button pressed")
+      window.location.href = "http://127.0.0.1:8000/api/oauth/"
+    
     }
 
     return (
@@ -80,17 +82,18 @@ const Login : React.FC=()=>{
           </div>
          
         <Button type='submit' >Create</Button>
+     
+        </form>
         <div>
         <Button variant={"outline"} className="flex item-center rounded-md px-4 py-2">
             <img src={google} className="w-6 h-6 mr-2" alt='logo'/>
             <span className="text-sm font-medium">Sign in with Google</span>
           </Button>
-          <Button variant={"outline"} className="flex item-center rounded-md px-4 py-2">
+          <Button variant={"outline"} onClick={loginWithChanneli} className="flex item-center rounded-md px-4 py-2">
             <img src={imglogo} className="w-6 h-6 mr-2" alt='logo'/>
             <span className="text-sm font-medium">Sign in with Channeli</span>
           </Button>
         </div>
-        </form>
   </CardContent>
 
 </Card>
