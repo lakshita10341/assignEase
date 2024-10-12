@@ -24,18 +24,25 @@ class IsModeratorOrCreator(BasePermission):
 
 class IsReviewer(BasePermission):
     def has_permission(self, request, view):
-        print(request.data)
+    
         channel_id=request.data.get('channel_id')
-        creator_id = request.data.get('creator_id')
+        creator_id = request.user.id
+       
         try:
             channel = Channels.objects.get(channelid=channel_id)
+           
         except Channels.DoesNotExist:
             print("Channel doesn't exist")
             return False
         
         try:
-            member = Member.objects.get(memberid=creator_id,channel_id=channel)
-            return member.is_reviewer
+          
+            member = Member.objects.get(memberName=creator_id,channel_id=channel)
+     
+            print(member.is_admin, member.is_reviewer)
+            if member.is_admin:
+                return True
+            return member.is_reviewer 
         
         except Member.DoesNotExist:
             return False

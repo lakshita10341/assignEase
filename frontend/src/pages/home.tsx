@@ -8,18 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import commonAvatar from '../components/common.png';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/redux/store"
 import { addChannel, fetchChannels } from "@/features/thunks/channelThunk"
 import { fetchProfile } from "@/features/thunks/profileThunk"
+import Navbar from "@/components/navbar";
+import { setSelectedChannel } from "@/features/slices/selectedChannel"
+import { useNavigate } from "react-router-dom"
 
-// interface channel{
-//   channelid: string,
-//   channelName: string,
-// }
 
 const Home : React.FC = ()=>{
 
@@ -27,29 +25,17 @@ const Home : React.FC = ()=>{
    const dispatch = useDispatch<AppDispatch>();
    const channels = useSelector((state: RootState)=>state.channels.channels);
    const loading = useSelector((state: RootState)=>state.channels.loading)
-   const profile = useSelector((state: RootState)=> state.profile.user); 
-  
-   const avatarUrl = profile?.avatar || commonAvatar
-   const username = profile?.username || "Guest"
+  const navigate = useNavigate();
    useEffect(()=>{
     dispatch(fetchChannels());
     dispatch(fetchProfile());
    },[dispatch]);
-    // useEffect(()=>{
-    //     const fetchChannels = async()=>{
-    //         try{
-    //             const response = await api.get(getChannelsRoute);          
-    //             console.log(response)
-    //             getChannels(response.data)
-    //         }catch(err){
-    //             console.log(err);
-    //         }
-         
-    //     }
-    //     fetchChannels();       
-    // },[])
-    const handleClick =()=>{
-        
+ 
+    const handleClick =(channelid : string)=>{
+        console.log("Button pressed")
+        dispatch(setSelectedChannel(channelid));
+        navigate('dashboard/')
+
     }
     const addChannels = async(e:React.FormEvent)=>{
         e.preventDefault()
@@ -64,13 +50,8 @@ const Home : React.FC = ()=>{
         <>
         <div className="w-screen h-screen relative">
 
-        <div className="flex items-center absolute top-4 right-4">
-       
-            <span>{username}</span>
-            <img src = {avatarUrl} alt = "User avatar" className="w-16 h-16 rounded-full border-gray-300" />
-           
-         
-        </div>
+        
+        <Navbar />
 
 
 
@@ -79,7 +60,7 @@ const Home : React.FC = ()=>{
     { loading ? 
           <p>Loading...</p> :
 
-        (channels.map((channel)=><div className='w-full py-2 text-lg font-bold bg-sky-950 rounded-sm text-white flex items-center justify-center m-1' key={channel.channelid} onClick={handleClick}>{channel.channelName}</div>))
+        (channels.map((channel)=><div className='w-full py-2 text-lg font-bold bg-sky-950 rounded-sm text-white flex items-center justify-center m-1' key={channel.channelid} onClick={()=>handleClick(channel.channelid)}>{channel.channelName}</div>))
     }
 </div> 
        <div className="absolute bottom-4 right-4">

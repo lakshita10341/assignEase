@@ -4,8 +4,12 @@ import api from "../../../api";
 
 export const fetchChannels = createAsyncThunk('channels/fetchChannels',
     async()=>{
+       try{
         const response = await api.get(getChannelsRoute);
         return response.data;
+       }catch(error:any){
+        
+       }
     }
 );
 

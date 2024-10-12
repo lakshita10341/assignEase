@@ -50,6 +50,11 @@ class ChannelSerializer(serializers.ModelSerializer):
             channelName = validated_data.get('channelName'),
             created_by = user,
         )
+        Member.objects.create(
+            channel_id = channel,
+            memberName = user,
+            is_admin = True,
+        )
         channel.save()
         print('done')
         return channel

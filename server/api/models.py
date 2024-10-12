@@ -27,6 +27,7 @@ class Member(models.Model):
      is_moderator = models.BooleanField(default=False)
      is_reviewer = models.BooleanField(default=False)
      is_student = models.BooleanField(default=True)
+     is_admin = models.BooleanField(default=False)
      
      class Meta:
           constraints = [
