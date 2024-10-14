@@ -59,15 +59,21 @@ class ChannelSerializer(serializers.ModelSerializer):
         print('done')
         return channel
 
+class GetMemberDataSerializer(serializers.ModelSerializer):
+    memberName = ProfileSerializer(read_only=True)
+    class Meta:
+        model = Member
+        fields = ['memberName','is_moderator','is_reviewer','is_student']
+
 class MemberDataSerializer(serializers.ModelSerializer):
     memberName = serializers.UUIDField()
     class Meta:
         model = Member
-        fields = ['memberName', 'is_moderator', 'is_reviewer']
+        fields = ['memberName', 'is_moderator', 'is_reviewer','is_student']
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    membersData = MemberDataSerializer(many=True, write_only=True)
+    membersData = MemberDataSerializer(many=True)
     channel_id = serializers.UUIDField()
 
     class Meta:
@@ -79,7 +85,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         channel_id = validated_data.get('channel_id')
-        membersData = validated_data.get('membersData')
+        membersData = validated_data.get('membersData',[])
         print(f"Received channel_id: {channel_id}")
         print(f"Received membersData: {membersData}")
         members = []
@@ -89,6 +95,7 @@ class MemberSerializer(serializers.ModelSerializer):
             channel = Channels.objects.get(channelid=channel_id)
 
             for memberData in membersData:
+                print(memberData)
                 user_id = memberData.get('memberName')
                 try:
                     user = User.objects.get(id=user_id)
@@ -96,7 +103,8 @@ class MemberSerializer(serializers.ModelSerializer):
                         memberName=user,
                         channel_id=channel,
                         is_reviewer=memberData.get('is_reviewer'),  
-                        is_moderator=memberData.get('is_moderator')  
+                        is_moderator=memberData.get('is_moderator') , 
+                        is_student=memberData.get('is_student')
                     )
                     members.append(member)
                 except User.DoesNotExist:

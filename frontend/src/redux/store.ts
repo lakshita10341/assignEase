@@ -4,7 +4,8 @@ import channelsReducer from '@/features/slices/channelSlice'
 import profileReducer from '@/features/slices/profileSlice'
 import createAssignmentReducer from '@/features/slices/assignmentSlice'
 import selectChannelReducer from '@/features/slices/selectedChannel'
- 
+import membersReducer from '@/features/slices/memberSlice' 
+import usersReducer from '@/features/slices/getUserSlice'
 
 
 export const store = configureStore({
@@ -14,6 +15,8 @@ export const store = configureStore({
     profile : profileReducer,
     assignments : createAssignmentReducer,
     selectChannel : selectChannelReducer,
+    member : membersReducer,
+    users : usersReducer,
   } ,
 })
 

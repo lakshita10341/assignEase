@@ -12,11 +12,11 @@ class IsModeratorOrCreator(BasePermission):
         except Channels.DoesNotExist:
             return False
         
-        if channel.created_by == request.memberName:
+        if channel.created_by == request.user:
             return True
     
         try:
-            member = Member.objects.get(memberName=request.User, channel_id=channel)
+            member = Member.objects.get(memberName=request.user, channel_id=channel)
             return member.is_moderator
         except Member.DoesNotExist:
             return False

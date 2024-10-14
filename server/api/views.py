@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
 from django.forms import ValidationError
-from .serializers import ProfileSerializer, RegisterSerializer, ChannelSerializer, MemberSerializer
+from .serializers import GetMemberDataSerializer, ProfileSerializer, RegisterSerializer, ChannelSerializer, MemberSerializer
 from .permissions import IsModeratorOrCreator
 
 # Create your views here.
@@ -82,7 +82,7 @@ class GetUserView(generics.ListAPIView):
 class GetMemberView(generics.ListAPIView):
     queryset = Member.objects.all()
     permission_classes=[IsAuthenticated]
-    serializer_class = MemberSerializer
+    serializer_class = GetMemberDataSerializer
     
     def get_queryset(self):
         channel_id = self.request.query_params.get('channel_id')

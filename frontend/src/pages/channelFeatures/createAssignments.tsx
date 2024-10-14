@@ -73,9 +73,7 @@ const CreateAssignment : React.FC = ()=>{
         }catch(err: any){
             setFormError(err)
         }
-        
-
-
+  
     }
 
     return (

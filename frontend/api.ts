@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios"
 import Cookies from 'js-cookie'
+import { useNavigate } from "react-router-dom"
 
 const api : AxiosInstance = axios.create({
     baseURL: "http://127.0.0.1:8000/",
@@ -17,7 +18,9 @@ api.interceptors.response.use((response)=>{
     return response;
 },
 async(error)=>{
+    const navigate = useNavigate();
     const originalrequest = error.config;
+    console.log("error occured")
     if(error.response.status===401 && !originalrequest._retry){
         originalrequest._retry = true;
         console.log("getting refresh token")
@@ -33,7 +36,8 @@ async(error)=>{
                 return axios(originalrequest);
 
             }catch(error){
-                console.log(error)
+                console.log(error);
+                navigate('login/');
                 return error;
             }
         }

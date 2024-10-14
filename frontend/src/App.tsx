@@ -8,6 +8,9 @@ import Login from './pages/login'
 import OAuthCallBack from './pages/oAuthCallBack'
 import Dashboard from './pages/Dashboard'
 import CreateAssignment from './pages/channelFeatures/createAssignments'
+import ManageParticipants from './pages/channelFeatures/manageParticipants'
+import Chat from './pages/channelFeatures/chat'
+import ViewParticipants from './pages/channelFeatures/viewParticipants'
 function App() {
  
 
@@ -22,6 +25,9 @@ function App() {
         <Route path='oauth/callback/' element = {<ProtectedRoute><OAuthCallBack /></ProtectedRoute>}></Route>
         <Route path='dashboard/' element = {<ProtectedRoute><Dashboard /></ProtectedRoute>}></Route>
         <Route path='dashboard/createAssignments/' element = {<ProtectedRoute><CreateAssignment /></ProtectedRoute>}></Route>
+        <Route path='dashboard/manageParticipants/' element = {<ProtectedRoute><ManageParticipants /></ProtectedRoute>}></Route>
+        <Route path='dashboard/chats/' element = {<ProtectedRoute><Chat /></ProtectedRoute>}></Route>
+        <Route path='dashboard/viewParticipants/' element = {<ProtectedRoute><ViewParticipants /></ProtectedRoute>}></Route>
       </Routes>
      </BrowserRouter> 
     </>
@@ -29,3 +35,15 @@ function App() {
 }
 
 export default App
+
+
+
+// import React from 'react'
+
+// function App() {
+//   return (
+//     <div>App</div>
+//   )
+// }
+
+// export default App
