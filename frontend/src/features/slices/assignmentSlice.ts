@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAssignment } from "../thunks/assignmentThunk";
+import { fetchAssignments } from "../thunks/fetchAssignmentThunk";
 
 interface Assignment{
-    id : string,
+    assignment_id : number,
     title : string,
     description : string,
     deadline : Date,
+    attachment: null;
 }
 
 interface AssignmentsState{
@@ -40,6 +42,19 @@ const assignmentSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload || "Something went wrong"
             })
+            .addCase(fetchAssignments.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchAssignments.fulfilled, (state, action) => {
+                state.loading = false;
+                state.assignments = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchAssignments.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch assignments";
+            });
     }
 })
 export default assignmentSlice.reducer;

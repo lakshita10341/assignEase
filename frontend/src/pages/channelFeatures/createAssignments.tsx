@@ -33,6 +33,9 @@ const CreateAssignment : React.FC = ()=>{
     const toggleCalender = ()=>{
       setShowCalender(!showCalender);
     }
+    // const toggleList = ()=>{
+
+    // }
     const handleDate = (date: Date | undefined)=>{
 
           setDate(date);
@@ -59,8 +62,7 @@ const CreateAssignment : React.FC = ()=>{
           title,
           description,
           deadline,
-          channel_id : selectedChannelId,
-          
+          channel_id : selectedChannelId,         
         }
         try{
           const query = {
@@ -124,6 +126,10 @@ const CreateAssignment : React.FC = ()=>{
                   </div>
               )
             }
+            {/* <div>
+              <div>AddStudents</div>
+              <div onClick={toggleList}>{">"}</div>
+            </div> */}
             
           </div>
           </CardContent>

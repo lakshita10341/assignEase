@@ -1,5 +1,3 @@
-
-from typing import Required
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
@@ -11,10 +9,9 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='assignments/avatars',null = True)
     bio = models.TextField(null=True, blank =True)
     
-
 class Channels(models.Model):
     channelid =  models.UUIDField(default=uuid.uuid4,editable=False, unique=True, primary_key=True)
-    channelName = models.CharField(unique='True')
+    channelName = models.CharField(unique=True)
     created_by = models.ForeignKey(User,null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
@@ -27,13 +24,11 @@ class Member(models.Model):
      is_moderator = models.BooleanField(default=False)
      is_reviewer = models.BooleanField(default=False)
      is_student = models.BooleanField(default=True)
-     is_admin = models.BooleanField(default=False)
-     
+     is_admin = models.BooleanField(default=False)    
      class Meta:
           constraints = [
                models.UniqueConstraint(fields = ['memberName','channel_id'], name = 'channel_member')
-          ]
-     
+          ]    
      def __str__(self):
           return self.memberName
      
@@ -74,7 +69,8 @@ STATUS = (
      ('1',"NOT STARTED"),
      ('2',"UNDER ITERATIONS"),
      ('3','COMPLETED')
-)    
+)
+
 class Submission(models.Model):
      submission_id=models.AutoField(primary_key=True)
      group_id = models.ForeignKey(Group,on_delete=models.CASCADE)
@@ -98,7 +94,7 @@ class Comments(models.Model):
      
 
 
-
+                                                                                                               
 
 
 

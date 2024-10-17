@@ -2,7 +2,7 @@ from xml.dom import ValidationErr
 from requests import Response
 from rest_framework import serializers
 from ..models import Assignments, Group, Member
-from ..serializers import MemberSerializer
+from ..serializers import MemberSerializer, ProfileSerializer
 
 class AddAssignmentSerializer(serializers.ModelSerializer):
     attachments = serializers.FileField(
@@ -41,6 +41,12 @@ class AddAssignmentSerializer(serializers.ModelSerializer):
             assignment.attachments = attachments
             assignment.save()
         return assignment
+    
+class AssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Assignments
+        fields = ['assignment_id','title','description','deadline','attachments']
+
     
 class GroupSerializer(serializers.ModelSerializer):
     # student_ids = MemberSerializer()
@@ -96,7 +102,11 @@ class GroupsSerializer(serializers.ModelSerializer):
         
         return created_group
 
-            
+class StudentSerializer(serializers.ModelSerializer):
+    memberName = ProfileSerializer(read_only=True)
+    class Meta:
+        model = Member
+        fields = ['memberid','memberName']           
 
 
                 

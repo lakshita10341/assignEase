@@ -11,6 +11,8 @@ import CreateAssignment from './pages/channelFeatures/createAssignments'
 import ManageParticipants from './pages/channelFeatures/manageParticipants'
 import Chat from './pages/channelFeatures/chat'
 import ViewParticipants from './pages/channelFeatures/viewParticipants'
+import CreatedAssignments from './pages/channelFeatures/createdAssignments'
+import AssignmentDetails from './pages/channelFeatures/AssignmentDetails'
 function App() {
  
 
@@ -28,6 +30,8 @@ function App() {
         <Route path='dashboard/manageParticipants/' element = {<ProtectedRoute><ManageParticipants /></ProtectedRoute>}></Route>
         <Route path='dashboard/chats/' element = {<ProtectedRoute><Chat /></ProtectedRoute>}></Route>
         <Route path='dashboard/viewParticipants/' element = {<ProtectedRoute><ViewParticipants /></ProtectedRoute>}></Route>
+        <Route path='dashboard/createdAssignments/' element = {<ProtectedRoute><CreatedAssignments /></ProtectedRoute>}></Route>
+        <Route path='assignment/:assignmentId' element = {<ProtectedRoute><AssignmentDetails /></ProtectedRoute>}></Route>
       </Routes>
      </BrowserRouter> 
     </>

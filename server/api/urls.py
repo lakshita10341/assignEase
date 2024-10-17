@@ -14,6 +14,8 @@ urlpatterns =[
     path('getProfile/', views.GetProfile.as_view(), name='getProfile'),
     # path('getReviewers/',assignmentViews.GetReviewers.as_view(), name='getReviewers'),
    path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment'),
-   path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents')
+   path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents'),
+#    path('getStudents/')
+    path('fetchAssignments/',assignmentViews.GetAssignmennts.as_view(), name='getAssignments')
   
 ]
