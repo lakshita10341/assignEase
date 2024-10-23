@@ -61,8 +61,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class GroupsSerializer(serializers.ModelSerializer):
-
-    Group = GroupSerializer(many=True, write_only = True)
+    assignment_id = serializers.PrimaryKeyRelatedField(queryset=Assignments.objects.all(), write_only=True)
+    Group= GroupSerializer(many=True, write_only = True)
     
 
     class Meta:
@@ -72,34 +72,37 @@ class GroupsSerializer(serializers.ModelSerializer):
             'group_id' : {'read_only': True},
         }
     
-    def create(self,request):
-        Groups = request.data.get('Group')
-        assignment_id = request.data.get('assignment_id')
-
+    def create(self,validated_data):
+        Groups = validated_data.get('Group')
+        assignment_id = validated_data.get('assignment_id')
+        print(assignment_id,"k")
+        print(assignment_id.assignment_id)
         try:
-            assignment = Assignments.objects.get(assignment_id=assignment_id)
+            assignment = Assignments.objects.get(assignment_id=assignment_id.assignment_id)
+            print(assignment.assignment_id,"p")
         except Assignments.DoesNotExist:
             raise ValidationErr({'message': f"Assignment {assignment_id} doesn't exist"})
         created_group=[]
-        for Group in Groups:
+        for GroupData in Groups:
             students = []
-            student_ids = Group.data.get('student_id')
+            student_ids = GroupData.get('student_id')
+            print(student_ids)
             for student in student_ids:
-                student_id = student_ids.data.get('id')
+                
                 try:
-                    student_data = Member.objects.get(memberid = student_id)
+                    student_data = Member.objects.get(memberid = student)
                     if not student_data.is_student:
                         print(f"{student} is not a student")
                     else:
                         students.append(student_data)
                 except Member.DoesNotExist:
                     raise serializers.ValidationError({'message': f"Student with {student} doesn't exist"})
-            
+            print("y")
             group = Group.objects.create(assignment_id=assignment)
             group.student_id.set(students)
             group.save()
             created_group.append(group)
-        
+            print("u")
         return created_group
 
 class StudentSerializer(serializers.ModelSerializer):

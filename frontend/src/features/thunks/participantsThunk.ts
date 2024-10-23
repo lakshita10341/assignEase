@@ -29,6 +29,7 @@ export const fetchMembers = createAsyncThunk(
     'members/addMembers/',
     async(channelData : channel)=>{
             const response = await api.get(`${getMemberRoute}?channel_id=${channelData.channel_id}` );
+            console.log(response.data)
             return response.data;
     }
 )

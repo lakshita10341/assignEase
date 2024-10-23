@@ -1,11 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { addMembers, fetchMembers } from "../thunks/participantsThunk";
 
+interface MemberData{
+    id : string,
+    username : string,
+    avatar : string,
+    bio : string,
+}
 
 interface Member{
-    id : string,
-    name  : string,
-    avatar : string,
+    memberid : string,
+    memberName : MemberData,
+   
     is_moderator : boolean,
     is_admin : boolean,
     is_student : boolean,

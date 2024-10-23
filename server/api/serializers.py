@@ -63,7 +63,7 @@ class GetMemberDataSerializer(serializers.ModelSerializer):
     memberName = ProfileSerializer(read_only=True)
     class Meta:
         model = Member
-        fields = ['memberName','is_moderator','is_reviewer','is_student']
+        fields = ['memberName','memberid','is_moderator','is_reviewer','is_student']
 
 class MemberDataSerializer(serializers.ModelSerializer):
     memberName = serializers.UUIDField()
