@@ -13,6 +13,8 @@ import Chat from './pages/channelFeatures/chat'
 import ViewParticipants from './pages/channelFeatures/viewParticipants'
 import CreatedAssignments from './pages/channelFeatures/createdAssignments'
 import AssignmentDetails from './pages/channelFeatures/AssignmentDetails'
+import AllotedAssignments from './pages/channelFeatures/AllotedAssignments'
+import Submissions from './pages/channelFeatures/Submission'
 function App() {
  
 
@@ -32,6 +34,8 @@ function App() {
         <Route path='dashboard/viewParticipants/' element = {<ProtectedRoute><ViewParticipants /></ProtectedRoute>}></Route>
         <Route path='dashboard/createdAssignments/' element = {<ProtectedRoute><CreatedAssignments /></ProtectedRoute>}></Route>
         <Route path='assignment/:assignmentId' element = {<ProtectedRoute><AssignmentDetails /></ProtectedRoute>}></Route>
+        <Route path='dashboard/allotedAssignments/' element = {<ProtectedRoute><AllotedAssignments /></ProtectedRoute>}></Route>
+        <Route path='dashboard/submissions/' element = {<ProtectedRoute><Submissions /></ProtectedRoute>}></Route>
       </Routes>
      </BrowserRouter> 
     </>

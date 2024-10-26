@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import {UserPlus} from 'lucide-react';
+import {UserPlus, View} from 'lucide-react';
 import { fetchMembers } from "@/features/thunks/participantsThunk";
 import { Button } from "@/components/ui/button"
 import {
@@ -20,33 +20,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { toast } from "@/hooks/use-toast"
 
-interface details{
-    id : string;
-    name : string;
-    email : string;
-    avatar : string | null;
-    bio : string | null;
-}
-interface students{
-    student : details;
-    is_student : boolean;
-    is_moderator : boolean;
-    is_reviewer : boolean;
-    is_admin : boolean;
-}
-interface student{
-  id:string,
-
-}
-interface Group{
-  student_id : student[]
-}
 
 
-interface AssignmentStudents{
-  assignment_id : number,
-  Group : Group[]
-}
+
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
@@ -57,7 +33,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { addStudentRoute } from "@/routes/route";
+import { addStudentRoute, getAllotedStudents } from "@/routes/route";
 import api from "../../../api";
 
 const FormSchema = z.object({
@@ -71,6 +47,7 @@ const AssignmentDetails: React.FC = () => {
     const { assignments, loading, error } = useSelector((state: RootState) => state.assignments);
     const {selectedChannelId} = useSelector((state:RootState)=>state.selectChannel)
     const {member, memberloading, membererror} = useSelector((state:RootState)=>state.member)
+    const [allotedStudents,setAllotedStudents] = useEffect('')
     const dispatch: AppDispatch = useDispatch();
     useEffect(() => {
         if (assignments.length === 0) {
@@ -138,6 +115,10 @@ const AssignmentDetails: React.FC = () => {
             console.log(err)
           }
     };
+
+    const fetchAllotedStudents = async()=>{
+          const response = await api.get(getAllotedStudents+`?assignment_id=${assignmentId}`)
+    }
     return (
         <>
             <div className="relative w-screen h-screen">
@@ -212,6 +193,14 @@ const AssignmentDetails: React.FC = () => {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
+      </DialogContent>
+    </Dialog>
+    <Dialog>
+      <DialogTrigger asChild>
+        <View onClick={fetchStudents}/>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+     
       </DialogContent>
     </Dialog>
                         </div>
