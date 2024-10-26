@@ -44,7 +44,8 @@ class Assignments(models.Model):
      reviewers_id = models.ManyToManyField(Member, related_name='assignment_reviewers')
      channel_id = models.ForeignKey(Channels,on_delete=models.CASCADE)
      def __str__(self):
-          return self.title
+        return self.title if self.title else f"Assignment {self.assignment_id}"
+
      
 class Task(models.Model):
      task_id = models.AutoField(primary_key=True)
@@ -56,29 +57,32 @@ class Task(models.Model):
      score = models.IntegerField(default=0)
      def __str__(self):
           return self.taskTitle
-     
+STATUS = (
+     ('1',"NOT STARTED"),
+     ('2',"NOT REVIEWED"),
+     ('3',"RESUBMIT"),
+     ('3','COMPLETED')
+) 
+    
 class Group(models.Model):
      group_id = models.AutoField(primary_key=True)
      assignment_id = models.ForeignKey(Assignments,on_delete=models.CASCADE)
      student_id = models.ManyToManyField(Member,related_name='group_students')
      score = models.IntegerField(default = 0)
+     status = models.CharField(default = 1,choices = STATUS)
+     
      def __str__(self):
-          return self.assignment_id
+        return f"Group for Assignment: {self.assignment_id.title}"
 
-STATUS = (
-     ('1',"NOT STARTED"),
-     ('2',"UNDER ITERATIONS"),
-     ('3','COMPLETED')
-)
+
 
 class Submission(models.Model):
      submission_id=models.AutoField(primary_key=True)
      group_id = models.ForeignKey(Group,on_delete=models.CASCADE)
-     attachment = models.FileField(upload_to ='assignment_submissions/')
-     status = models.CharField(default = 1,choices = STATUS)
+     submission_text = models.TextField()
+     submission_file=models.FileField(upload_to='assignment-attachments/',null=True,blank=True)
      submit_date = models.DateTimeField(auto_now_add=True)
-     task_id = models.ForeignKey(Task,on_delete=models.CASCADE)
-     iteration_number = models.IntegerField(default = 1)
+     assignment_id = models.ForeignKey(Assignments,on_delete=models.CASCADE)
      def __str__(self):
           return self.submission_id
      

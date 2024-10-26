@@ -12,10 +12,14 @@ urlpatterns =[
     path('getUsers/', views.GetUserView.as_view(), name = "getUser"),
     path('getMembers/',views.GetMemberView.as_view(), name='getMembers'),
     path('getProfile/', views.GetProfile.as_view(), name='getProfile'),
-    # path('getReviewers/',assignmentViews.GetReviewers.as_view(), name='getReviewers'),
-   path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment'),
-   path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents'),
-#    path('getStudents/')
-    path('fetchAssignments/',assignmentViews.GetAssignmennts.as_view(), name='getAssignments')
-  
+    path('createAssignments/', assignmentViews.CreateAssignmentView.as_view(), name='createAssignment'),
+    path('createGroups/',assignmentViews.AddStudents.as_view(), name='addStudents'),
+    path('fetchAssignments/',assignmentViews.GetAssignmennts.as_view(), name='getAssignments'),
+    path('getAllotedAssignments/',assignmentViews.GetAssignmentAsStudents.as_view(),name='getAllotedAssignments'),
+    path('submitAssignments/',assignmentViews.SubmitAssignment.as_view(), name='submitAssignments'),
+    path('comment/',assignmentViews.Comment.as_view(),name='comment'),
+    path('getSubmissions/',assignmentViews.GetSubmission.as_view(),name='getSubmission'),
+    path('getComments/', assignmentViews.GetComments.as_view(),name='getComments')
+    
+   # path('getSubmissionComments/',assignmentViews.GetSubmissionComments.as_view(),name='submissionComments')
 ]

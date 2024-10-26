@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import logout
-from .models import User, Channels, Member
+
+from .models import Group, Submission, User, Channels, Member
 from rest_framework import generics,status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -27,7 +28,6 @@ class GetProfile(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Get the current authenticated user from the request
         user = request.user  # This provides the authenticated user instance
         serializer = ProfileSerializer(user)  # Serialize the user data
         return Response(serializer.data)
@@ -43,10 +43,7 @@ class GetChannelView(generics.ListAPIView):
     serializer_class = ChannelSerializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
-        # created_channels = Channels.objects.filter(created_by=self.request.user)
         member_channels = Channels.objects.filter(member__memberName = self.request.user)
-        # channels =  member_channels
-        # print(created_channels)
         return member_channels
 
 
@@ -88,3 +85,8 @@ class GetMemberView(generics.ListAPIView):
         channel_id = self.request.query_params.get('channel_id')
         members = Member.objects.filter(channel_id=channel_id)
         return members
+    
+
+        
+
+        
