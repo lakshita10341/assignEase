@@ -30,6 +30,7 @@ const Submissions : React.FC = ()=>{
     const data = {
         assignment_id:group.assignment_id.assignment_id,
         group_id:group.group_id,
+        role:role,
     }
     const handleSubmit =async(e:React.FormEvent)=>{
         e.preventDefault();
@@ -49,25 +50,7 @@ const Submissions : React.FC = ()=>{
             console.error("Failed to submit:", error);
         }
     };
-    const addComment = async(e:React.FormEvent)=>{
-        e.preventDefault();
-        if(!comment){
-            console.log("submission can't be empty");
-            return;
-        }
-        const Comment ={
-            assignment_id:group.assignment_id.assignment_id,
-            group_id:group.group_id,
-            comment:comment,
-        }
-        try {
-            const response = await api.post(addCommentRoute, Comment);
-            console.log(response.data);
-        } catch (error) {
-            console.error("Failed to COMMENT:", error);
-        }
-    }
-    
+   
     return(
 
         <>
@@ -91,20 +74,8 @@ const Submissions : React.FC = ()=>{
                         </form>
                     </>
                 ):(
-                    role==="reviewer" ? (
-                        <>
-                          <form onSubmit={addComment}>
-                        <div className=" border p-4 m-2">
-                        <h3>Comment</h3>
-                        <textarea placeholder="Comment" className="w-full p-2 border" value={comment} onChange={(e)=>setComment(e.target.value)}/>
-                        <button className="btn mt-2 p-2 bg-green-500 text-white" type='submit'>Comment</button>
-                        </div>
-                        </form>  
-                        </>
-                    ) : (
-                        <>
-                        </>
-                    )
+                   <>
+                   </>
                 )
             }
             

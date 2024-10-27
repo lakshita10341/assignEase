@@ -19,7 +19,7 @@ urlpatterns =[
     path('submitAssignments/',assignmentViews.SubmitAssignment.as_view(), name='submitAssignments'),
     path('comment/',assignmentViews.Comment.as_view(),name='comment'),
     path('getSubmissions/',assignmentViews.GetSubmission.as_view(),name='getSubmission'),
-    path('getComments/', assignmentViews.GetComments.as_view(),name='getComments')
-    
+    path('getComments/', assignmentViews.GetComments.as_view(),name='getComments'),
+    path('getAllotedStudents/',assignmentViews.GetAssignedStudents.as_view(),name="getAllotedStudents")
    # path('getSubmissionComments/',assignmentViews.GetSubmissionComments.as_view(),name='submissionComments')
 ]

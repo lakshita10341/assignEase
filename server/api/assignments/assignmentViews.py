@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..permissions import IsReviewer
 from ..serializers import ProfileSerializer
-from .assignmentSerializer import AddAssignmentSerializer, AssignmentSerializer, CommentSerializer, GetAssignmentStudents, GroupAssignmentSerializer, GroupsSerializer,  SubmissionSerializer, SubmitAssignmentSerializer
+from .assignmentSerializer import AddAssignmentSerializer, AssignmentSerializer, CommentSerializer, GetAssignmentStudents, GetCommentSerializer, GroupAssignmentSerializer, GroupsSerializer,  SubmissionSerializer, SubmitAssignmentSerializer
 from ..models import Assignments, Comments, Group, Member, Submission
 
 
@@ -57,7 +57,7 @@ class SubmitAssignment(generics.CreateAPIView):
     serializer_class=SubmitAssignmentSerializer     
     
 class Comment(generics.CreateAPIView):
-    permission_classes=[IsAuthenticated, IsReviewer]
+    permission_classes=[IsAuthenticated]
     serializer_class=CommentSerializer
 
 class GetSubmission(generics.ListAPIView):
@@ -86,13 +86,12 @@ class GetSubmission(generics.ListAPIView):
 class GetComments(generics.ListAPIView):
     queryset=Comments.objects.all()
     permission_classes=[IsAuthenticated]
-    serializer_class=CommentSerializer
+    serializer_class=GetCommentSerializer
 
-    def post(self,request):
-        submit_id=request.data.get('submit_id')
-        comments=Comment.objects.filter(submit_id=submit_id)
-        serializer=self.serializer_class(comments,many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        submit_id=self.request.query_params.get('submit_id')
+        comments=Comments.objects.filter(submit_id=submit_id)
+        return comments
         
 class GetAssignedStudents(generics.ListAPIView):
     queryset=Group.objects.all()

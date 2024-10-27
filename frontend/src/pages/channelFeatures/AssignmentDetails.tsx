@@ -2,9 +2,9 @@ import DashBoardComponents from "@/components/dashBoardComponents"
 import Navbar from "@/components/navbar"
 import { fetchAssignments } from "@/features/thunks/fetchAssignmentThunk";
 import { AppDispatch, RootState } from "@/redux/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {UserPlus, View} from 'lucide-react';
 import { fetchMembers } from "@/features/thunks/participantsThunk";
 import { Button } from "@/components/ui/button"
@@ -42,13 +42,22 @@ const FormSchema = z.object({
     }),
   })
 
+interface Students{
+  group_id:number;
+  usernames:string;
+  status:number;
+  score:number;
+  assignment_id:number;
+}
+
 const AssignmentDetails: React.FC = () => {
     const { assignmentId } = useParams<{ assignmentId: string }>();
     const { assignments, loading, error } = useSelector((state: RootState) => state.assignments);
     const {selectedChannelId} = useSelector((state:RootState)=>state.selectChannel)
     const {member, memberloading, membererror} = useSelector((state:RootState)=>state.member)
-    const [allotedStudents,setAllotedStudents] = useEffect('')
+    const [allotedStudents, setAllotedStudents] = useState<Students[]>([]); 
     const dispatch: AppDispatch = useDispatch();
+    const navigate=useNavigate();
     useEffect(() => {
         if (assignments.length === 0) {
             dispatch(fetchAssignments(selectedChannelId)); 
@@ -98,6 +107,15 @@ const AssignmentDetails: React.FC = () => {
      
         console.log(students)
     }
+    const handleStudent = (student:Students)=>{
+      const role="reviewer"
+      const group={
+        group_id:student.group_id,
+        assignment_id:student.assignment_id,
+      }
+      console.log(group)
+      navigate('/dashboard/submissions/', { state: { group,role } });
+    };
     const onSubmit = async(data: z.infer<typeof FormSchema>)=>{
           try{
             const studentsData = {
@@ -118,6 +136,8 @@ const AssignmentDetails: React.FC = () => {
 
     const fetchAllotedStudents = async()=>{
           const response = await api.get(getAllotedStudents+`?assignment_id=${assignmentId}`)
+          console.log(response.data);
+          setAllotedStudents(response.data);
     }
     return (
         <>
@@ -197,10 +217,16 @@ const AssignmentDetails: React.FC = () => {
     </Dialog>
     <Dialog>
       <DialogTrigger asChild>
-        <View onClick={fetchStudents}/>
+        <View onClick={fetchAllotedStudents}/>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-     
+          {
+            allotedStudents.map((student)=>(
+              <div key='student.group_id' onClick={()=>handleStudent(student)} >
+                {student.usernames}
+              </div>
+            ))
+          }
       </DialogContent>
     </Dialog>
                         </div>

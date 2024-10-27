@@ -1,8 +1,9 @@
 from tokenize import Comment
 from xml.dom import ValidationErr
+from django.forms import ValidationError
 from requests import Response
 from rest_framework import serializers, status
-from ..models import Assignments, Group, Member, Submission
+from ..models import Assignments, Channels, Group, Member, Submission, Comments
 from ..serializers import MemberSerializer, ProfileSerializer
 
 class AddAssignmentSerializer(serializers.ModelSerializer):
@@ -124,15 +125,35 @@ class SubmitAssignmentSerializer(serializers.ModelSerializer):
                 submission=validated_data.get('submission'),
             )
 
+class GetCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Comments
+        fields=['c_id','submit_id','comment','reviewer_id','reviewer_date']
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Comment
-        fields = ['submission_id','comment','reviewer_id']
+        model = Comments
+        fields = ['submit_id','comment']
     def create(self,validated_data):
-        return Comment.objects.create(
-            submission_id=validated_data.get('submission_id'),
-            assignment_id=validated_data.get('assignment_id'),
-            comment = validated_data.get('comment')
+        
+        user = self.context['request'].user
+        channel_id = self.context['request'].data.get('channel_id')
+        print(user.id)
+        print(channel_id)
+        try:
+            channel = Channels.objects.get(channelid=channel_id)
+           
+        except Channels.DoesNotExist:
+            raise ValidationError("Channel doesn't exist.")
+        try:
+            reviewer_id = Member.objects.get(channel_id=channel, memberName=user.id)
+        except Member.DoesNotExist:
+            raise ValidationError("Reviewer not found for the specified channel and user.")
+        
+        return Comments.objects.create(
+            submit_id=validated_data.get('submit_id'),
+            comment = validated_data.get('comment'),
+            reviewer_id=reviewer_id,
         )
 class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -145,14 +166,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
         ]
 
 class GetAssignmentStudents(serializers.ModelSerializer):
+    usernames = serializers.SerializerMethodField()
+    assignment_id=AssignmentSerializer(read_only=True)
     class Meta:
         model = Group
-        
-# class SubmissionCommentSerializer(serializers.ModelSerializer):
-#     comment = CommentSerializer
-#     class Meta:
-#         model = Submission
-#         fields = ['submission_id','submission','submit_date','comment']    
+        fields = ['group_id', 'assignment_id', 'score', 'status', 'usernames']
+
+    def get_usernames(self, obj):
+        # Access the related 'student_id' (Members) and get the usernames of the related 'User'
+        return [student.memberName.username for student in obj.student_id.all()]
 
  
     

@@ -70,7 +70,10 @@ class Group(models.Model):
      student_id = models.ManyToManyField(Member,related_name='group_students')
      score = models.IntegerField(default = 0)
      status = models.CharField(default = 1,choices = STATUS)
-     
+     # class Meta:
+     #      constraints = [
+     #           models.UniqueConstraint(fields = ['student_id','assignment_id'],name='assignedStudnets')
+     #      ]
      def __str__(self):
         return f"Group for Assignment: {self.assignment_id.title}"
 

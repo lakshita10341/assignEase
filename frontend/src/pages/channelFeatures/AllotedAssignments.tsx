@@ -39,6 +39,9 @@ const AllotedAssignments : React.FC = ()=>{
 
     const handleNavigate = async (group: any) => {
       const role="student"
+      // const groups={
+        
+      // }
       navigate('/dashboard/submissions/', { state: { group,role } });
     };
 
