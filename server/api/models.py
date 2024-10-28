@@ -59,8 +59,7 @@ class Task(models.Model):
           return self.taskTitle
 STATUS = (
      ('1',"NOT STARTED"),
-     ('2',"NOT REVIEWED"),
-     ('3',"RESUBMIT"),
+     ('2',"UNDER ITERATIONS"),
      ('3','COMPLETED')
 ) 
     

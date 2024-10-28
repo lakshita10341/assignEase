@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -15,14 +15,19 @@ import type {AppDispatch, RootState} from '@/redux/store'
 import { useDispatch, useSelector } from "react-redux"
 import LoginRegister from '@/components/loginRegister'
 import { userLogin } from "@/features/thunks/userAuth"
+import Cookies from 'js-cookie'
 
 const Login : React.FC=()=>{
     const [username, setUsername] = useState('')
     const [password,setPassword] = useState('')
     const [formError, setFormError] = useState('')
     const dispatch: AppDispatch = useDispatch();
-const {loading, error} = useSelector((state: RootState)=> state.userReducer);
 
+const {loading, error} = useSelector((state: RootState)=> state.userReducer);
+    useEffect(()=>{
+      Cookies.remove('access_token')
+      Cookies.remove('refresh_token')
+    },[])
     const navigate = useNavigate();
     const handleSubmit = async(e: React.FormEvent)=>{
         e.preventDefault();

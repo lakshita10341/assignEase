@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..permissions import IsReviewer
 from ..serializers import ProfileSerializer
-from .assignmentSerializer import AddAssignmentSerializer, AssignmentSerializer, CommentSerializer, GetAssignmentStudents, GetCommentSerializer, GroupAssignmentSerializer, GroupsSerializer,  SubmissionSerializer, SubmitAssignmentSerializer
+from .assignmentSerializer import AddAssignmentSerializer, AssignmentSerializer, ChangeStatusSerializer, CommentSerializer, GetAssignmentStudents, GetCommentSerializer, GroupAssignmentSerializer, GroupsSerializer,  SubmissionSerializer, SubmitAssignmentSerializer
 from ..models import Assignments, Comments, Group, Member, Submission
 
 
@@ -101,3 +101,27 @@ class GetAssignedStudents(generics.ListAPIView):
         assignment_id=self.request.query_params.get('assignment_id')
         students = Group.objects.filter(assignment_id=assignment_id)
         return students
+
+class ChangeStatus(generics.UpdateAPIView):
+    queryset=Group.objects.all()
+    permission_classes=[IsAuthenticated]
+    serializer_class=ChangeStatusSerializer
+    
+    def patch(self, request, *args, **kwargs):
+        group_id = request.data.get('group_id')
+        
+        if not group_id:
+            return Response({"error": "group_id is required in the payload"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            group = Group.objects.get(group_id=group_id)
+        except Group.DoesNotExist:
+            return Response({"error": "Group not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(group, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    

@@ -3,6 +3,8 @@ import api from "../../api"
 import { addCommentRoute, getCommentRoute, getSubmission } from '@/routes/route';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import FileViewer from 'react-file-viewer';
+import CustomErrorComponent from "custom-error";
 interface DataProps {
     data: {
         group_id: number;
@@ -19,7 +21,7 @@ interface Submission{
     submission_id:number,
     submission_text:string,
     submit_date:Date,
-    submission_file:File,
+    submission_file:string,
 }
 const SubCom : React.FC<DataProps> = ({ data })=>{
     const [submissions, setSubmissions]=useState<Submission[]>([])
@@ -54,7 +56,12 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 console.error("Failed to fetch comments:", err);
             }
         }
-     
+        const [openedFile, setOpenedFile] = useState(null);
+
+        const toggleFileViewer = (submissionId:any) => {
+          // If the clicked submission ID is already opened, close it; otherwise, open it
+          setOpenedFile(openedFile === submissionId ? null : submissionId);
+        };
         const addComment = async(e:React.FormEvent,submission_id:number)=>{
             e.preventDefault();
             if(!comment){
@@ -77,13 +84,35 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 console.error("Failed to COMMENT:", error);
             }
         }
+        const onFileViewError = (error: any) => {
+            console.error("Error in FileViewer:", error);
+          };
         
     return (
         <>
             <div>       
             {submissions.map((submission) => (
-                    <div key={submission.submission_id}>
+                    <div
+                     key={submission.submission_id}
+                      className="p-4 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
+                     >
+                        <h2>Submission:</h2>
                         <p>{submission.submission_text}</p>
+                        {submission.submission_file && (
+            <>
+              <button onClick={() => toggleFileViewer(submission.submission_id)}>
+                {openedFile === submission.submission_id ? 'Hide File' : 'Show File'}
+              </button>
+              {openedFile === submission.submission_id && (
+                <FileViewer
+                  fileType={submission.submission_file.split('.').pop() || ''}
+                  filePath={submission.submission_file}
+                  errorComponent={CustomErrorComponent}
+                  onError={onFileViewError}
+                />
+              )}
+            </>
+          )}
                         <button onClick={() => fetchComments(submission.submission_id)}>
                             Show Comments
                         </button>

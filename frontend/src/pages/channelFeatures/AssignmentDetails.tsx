@@ -112,6 +112,7 @@ const AssignmentDetails: React.FC = () => {
       const group={
         group_id:student.group_id,
         assignment_id:student.assignment_id,
+        status:student.status,
       }
       console.log(group)
       navigate('/dashboard/submissions/', { state: { group,role } });

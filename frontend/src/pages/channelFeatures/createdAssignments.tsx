@@ -47,13 +47,13 @@ const CreatedAssignments : React.FC =()=>{
                     <div className="w-3/12 h-full">
                         <DashBoardComponents />
                     </div>
-                    <div className="flex w-9/12 flex-col justify-center items-center"></div>
+                    <div className="flex flex-col w-9/12  items-center">
                     {
                         assignments.length > 0 ? (
                             assignments.map((assignment)=>(
                                 <div 
                                 key={assignment.assignment_id} 
-                                className="p-4 border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
+                                className="p-8 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
                                 onClick={()=>navigateToAssignment(assignment.assignment_id)}
                                 >
                                     {assignment.title}
@@ -64,6 +64,7 @@ const CreatedAssignments : React.FC =()=>{
                             <p>No assignments created</p>
                         )
                     }
+                    </div>
         </div>
         </div>
     </>

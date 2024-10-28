@@ -7,7 +7,7 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import { RootState } from "@/redux/store";
-import { getAllotedAssignments } from "@/routes/route";
+
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import api from "../../../api"
@@ -39,9 +39,7 @@ const AllotedAssignments : React.FC = ()=>{
 
     const handleNavigate = async (group: any) => {
       const role="student"
-      // const groups={
-        
-      // }
+    
       navigate('/dashboard/submissions/', { state: { group,role } });
     };
 
@@ -62,7 +60,9 @@ const AllotedAssignments : React.FC = ()=>{
      notSubmitted.length>0 ? 
      (
       notSubmitted.map(group=>(
-      <div key={group.id} onClick={()=>handleNavigate(group)}>
+      <div key={group.id} 
+       className="p-4 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
+      onClick={()=>handleNavigate(group)}>
         <h3>{group.assignment_id.title}</h3>
       </div>
      )))
@@ -80,7 +80,9 @@ const AllotedAssignments : React.FC = ()=>{
      underIterations.length>0 ? 
      (
       underIterations.map(group=>(
-      <div key={group.id}>
+      <div key={group.id} 
+      className="p-4 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
+      onClick={()=>handleNavigate(group)} >
         <h3>{group.assignment_id.title}</h3>
       </div>
      )))
@@ -98,7 +100,9 @@ const AllotedAssignments : React.FC = ()=>{
      completed.length>0 ? 
      (
       completed.map(group=>(
-      <div key={group.id}>
+      <div key={group.id}
+       className="p-4 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
+      onClick={()=>handleNavigate(group)}>
         <h3>{group.assignment_id.title}</h3>
       </div>
      )))

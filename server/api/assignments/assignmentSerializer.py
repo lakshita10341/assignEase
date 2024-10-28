@@ -117,12 +117,13 @@ class GroupAssignmentSerializer(serializers.ModelSerializer):
 class SubmitAssignmentSerializer(serializers.ModelSerializer):              
     class Meta:
         model = Submission
-        fields = ['group_id','assignment_id','submission']
+        fields = ['group_id','assignment_id','submission_text','submission_file']
     def create(self,validated_data):
         return Submission.objects.create(
                 group_id=validated_data.get('group_id'),
                 assignment_id=validated_data.get('assignment_id'),
-                submission=validated_data.get('submission'),
+                submission_text=validated_data.get('submission_text'),
+                submission_file=validated_data.get('submission_file')
             )
 
 class GetCommentSerializer(serializers.ModelSerializer):
@@ -177,7 +178,10 @@ class GetAssignmentStudents(serializers.ModelSerializer):
         return [student.memberName.username for student in obj.student_id.all()]
 
  
-    
+class ChangeStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['status']   
 
 
 
