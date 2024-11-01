@@ -28,8 +28,8 @@ class GetProfile(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        user = request.user  # This provides the authenticated user instance
-        serializer = ProfileSerializer(user)  # Serialize the user data
+        user = request.user  
+        serializer = ProfileSerializer(user)  
         return Response(serializer.data)
 
 class CreateChannelView(generics.CreateAPIView):

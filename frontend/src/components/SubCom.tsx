@@ -59,7 +59,6 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
         const [openedFile, setOpenedFile] = useState(null);
 
         const toggleFileViewer = (submissionId:any) => {
-          // If the clicked submission ID is already opened, close it; otherwise, open it
           setOpenedFile(openedFile === submissionId ? null : submissionId);
         };
         const addComment = async(e:React.FormEvent,submission_id:number)=>{

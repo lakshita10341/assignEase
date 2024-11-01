@@ -18,7 +18,7 @@ api.interceptors.response.use((response)=>{
     return response;
 },
 async(error)=>{
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const originalrequest = error.config;
     console.log("error occured")
     if(error.response.status===401 && !originalrequest._retry){
@@ -37,7 +37,9 @@ async(error)=>{
 
             }catch(error){
                 console.log(error);
-                navigate('login/');
+                Cookies.remove('access_token')
+                Cookies.remove('refresh_token')
+                // navigate('/login');
                 return error;
             }
         }
