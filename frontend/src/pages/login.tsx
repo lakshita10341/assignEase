@@ -59,6 +59,10 @@ const {loading, error} = useSelector((state: RootState)=> state.userReducer);
     
     }
 
+    const loginWithGoogle=async()=>{
+      window.location.href="http://127.0.0.1:8000/api/googleAuth/"
+    }
+
     return (
         <>
    <div className="bg-gray-300 flex flex-row items-center w-screen">
@@ -91,7 +95,7 @@ const {loading, error} = useSelector((state: RootState)=> state.userReducer);
      
         </form>
         <div>
-        <Button variant={"outline"} className="flex item-center rounded-md px-4 py-2">
+        <Button variant={"outline"} onClick={loginWithGoogle} className="flex item-center rounded-md px-4 py-2">
             <img src={google} className="w-6 h-6 mr-2" alt='logo'/>
             <span className="text-sm font-medium">Sign in with Google</span>
           </Button>

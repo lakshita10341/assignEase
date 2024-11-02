@@ -9,3 +9,4 @@ export const fetchProfile = createAsyncThunk(
         return response.data;
     }
 );
+

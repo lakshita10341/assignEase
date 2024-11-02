@@ -1,6 +1,8 @@
 from django.urls import path
+
+
 from . import views
-from . import auth
+from . import auth,googleAuth
 from .assignments import assignmentViews
 urlpatterns =[
     path('user/register/',views.CreateUserView.as_view(),name='register'),
@@ -22,5 +24,6 @@ urlpatterns =[
     path('getComments/', assignmentViews.GetComments.as_view(),name='getComments'),
     path('getAllotedStudents/',assignmentViews.GetAssignedStudents.as_view(),name="getAllotedStudents"),
    # path('getSubmissionComments/',assignmentViews.GetSubmissionComments.as_view(),name='submissionComments')
-   path('changeStatus/',assignmentViews.ChangeStatus.as_view(),name='changeStatus')
+    path('changeStatus/',assignmentViews.ChangeStatus.as_view(),name='changeStatus'),
+    path('googleAuth/',googleAuth.getUser,name="getUser")
 ]

@@ -6,8 +6,7 @@ import os
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 
-# from serializers import RegisterSerializer
-# from models import User
+
 
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET_ID= os.getenv('CLIENT_SECRET_ID')

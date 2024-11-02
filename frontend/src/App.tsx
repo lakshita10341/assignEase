@@ -26,7 +26,7 @@ function App() {
         </Route>
         <Route path='login/' element={<Login />}></Route>
         <Route path='/' element = {<ProtectedRoute><Home /></ProtectedRoute>}></Route>
-        <Route path='oauth/callback/' element = {<ProtectedRoute><OAuthCallBack /></ProtectedRoute>}></Route>
+        <Route path='oauth/callback/' element = {<OAuthCallBack />}/>
         <Route path='dashboard/' element = {<ProtectedRoute><Dashboard /></ProtectedRoute>}></Route>
         <Route path='dashboard/createAssignments/' element = {<ProtectedRoute><CreateAssignment /></ProtectedRoute>}></Route>
         <Route path='dashboard/manageParticipants/' element = {<ProtectedRoute><ManageParticipants /></ProtectedRoute>}></Route>
