@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {UserPlus, View} from 'lucide-react';
+import {UserPlus, View, ClipboardPlus} from 'lucide-react';
 import { fetchMembers } from "@/features/thunks/participantsThunk";
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { toast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
+
+
 
 
 
@@ -33,12 +36,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { addStudentRoute, getAllotedStudents } from "@/routes/route";
+import { addReviewersRoute, addStudentRoute, getAllotedStudents } from "@/routes/route";
 import api from "../../../api";
 
 const FormSchema = z.object({
     students: z.array(z.string()).refine((value) => value.length > 0, {
       message: "You have to select at least one student.",
+    }),
+  })
+
+const ReviewerFormSchema = z.object({
+    reviewers: z.array(z.string()).refine((value) => value.length > 0, {
+      message: "You have to select at least one reviewer.",
     }),
   })
 
@@ -58,6 +67,8 @@ const AssignmentDetails: React.FC = () => {
     const [allotedStudents, setAllotedStudents] = useState<Students[]>([]); 
     const dispatch: AppDispatch = useDispatch();
     const navigate=useNavigate();
+    const [showStudentDialog, setStudentShowDialog] = useState(false);
+    const { toast } = useToast()
     useEffect(() => {
         if (assignments.length === 0) {
             dispatch(fetchAssignments(selectedChannelId)); 
@@ -72,7 +83,12 @@ const AssignmentDetails: React.FC = () => {
         }
     },[dispatch,member.length])
  
-
+    const reviewerForm = useForm<z.infer<typeof ReviewerFormSchema>>({
+      resolver: zodResolver(ReviewerFormSchema),
+      defaultValues: {
+        reviewers: [],
+      },
+    });
    
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -86,7 +102,7 @@ const AssignmentDetails: React.FC = () => {
     const numericAssignmentId = Number(assignmentId);
     const assignment = assignments.find((a) => a.assignment_id === numericAssignmentId);
     const students = member.filter(m=>m.is_student)
-  
+    const reviewers = member.filter(m=>m.is_reviewer)
     if(!assignments.length){
         return <p>No assignment found</p>
     }
@@ -101,12 +117,30 @@ const AssignmentDetails: React.FC = () => {
     if (!assignment) {
         return <p>No assignment found for ID: {assignmentId}</p>;
     }
-    const fetchStudents = async()=>{
+   
+    const fetchReviewers = async()=>{
 
-        const students = member.filter(m=>m.is_student)
      
-        console.log(students)
-    }
+   
+      
+  }
+
+  const addReviewers=async(data: z.infer<typeof ReviewerFormSchema>)=>{
+      const payload = {
+        assignment_id:numericAssignmentId,
+        reviewers_id:data.reviewers,
+      }
+      console.log(data)
+      try{
+        const response = await api.post(`${addReviewersRoute}?channel_id=${selectedChannelId}`,payload)
+       
+       
+      }catch(err){
+        console.error(err);
+      }
+     
+  }
+
     const handleStudent = (student:Students)=>{
       const role="reviewer"
       const group={
@@ -133,6 +167,12 @@ const AssignmentDetails: React.FC = () => {
           }catch(err){
             console.log(err)
           }
+          setStudentShowDialog(false);
+          toast({
+            title: "Success",
+            description: "Student added successfully!",
+          
+        });
     };
 
     const fetchAllotedStudents = async()=>{
@@ -156,9 +196,9 @@ const AssignmentDetails: React.FC = () => {
                             <h2>{assignment.description}</h2>
                         </div>
                         <div className="flex p-2 justify-start">
-                        <Dialog>
+                        <Dialog open={showStudentDialog} >
       <DialogTrigger asChild>
-        <UserPlus onClick={fetchStudents}/>
+        <UserPlus onClick={()=>setStudentShowDialog(true)}/>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
       <Form {...form}>
@@ -230,10 +270,72 @@ const AssignmentDetails: React.FC = () => {
           }
       </DialogContent>
     </Dialog>
+    <Dialog>
+      <DialogTrigger asChild>
+        <UserPlus onClick={fetchReviewers}/>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+      <Form {...reviewerForm}>
+      <form onSubmit={reviewerForm.handleSubmit(addReviewers)} className="space-y-8">
+        <FormField
+          control={reviewerForm.control}
+          name="reviewers"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Add reviewers</FormLabel>
+                <FormDescription>
+                  Choose reviewers
+                </FormDescription>
+              </div>
+              {reviewers.map((reviewer) => (
+                <FormField
+                  key={reviewer.memberid}
+                  control={reviewerForm.control}
+                  name="reviewers"
+                  render={({ field }) => {
+                    return (
+                      <FormItem
+                        key={reviewer.memberid}
+                        className="flex flex-row items-start space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(reviewer.memberid)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, reviewer.memberid])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      (value) => value !== reviewer.memberid
+                                    )
+                                  )
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="text-sm font-normal">
+                          {reviewer.memberName.username}
+                        </FormLabel>
+                      </FormItem>
+                    )
+                  }}
+                />
+              ))}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+      </DialogContent>
+    </Dialog>
+    
                         </div>
                     </div>
                 </div>
             </div>
+          
         </>
     );
 };

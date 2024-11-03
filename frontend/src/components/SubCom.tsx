@@ -35,7 +35,7 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
             try{
                 const response= await api.get(getSubmission, {params : data})
                 setSubmissions(response.data)
-                console.log(response.data)
+                
             }catch(err:any){
 
             }
@@ -72,9 +72,10 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 submit_id:submission_id,
                 comment:comment,
                 channel_id:selectedChannelId,
+                assignment_id:data.assignment_id,
             }
             try {
-                const response = await api.post(addCommentRoute, Comment);
+                const response = await api.post(`${addCommentRoute}?channel_id=${selectedChannelId}`, Comment);
                 console.log(response.data);
                 setComment('');
                 setActiveSubmissionId(null); 

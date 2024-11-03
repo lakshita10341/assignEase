@@ -25,5 +25,7 @@ urlpatterns =[
     path('getAllotedStudents/',assignmentViews.GetAssignedStudents.as_view(),name="getAllotedStudents"),
    # path('getSubmissionComments/',assignmentViews.GetSubmissionComments.as_view(),name='submissionComments')
     path('changeStatus/',assignmentViews.ChangeStatus.as_view(),name='changeStatus'),
-    path('googleAuth/',googleAuth.getUser,name="getUser")
+    path('googleAuth/',googleAuth.getUser,name="getUser"),
+    path('addReviewers/',assignmentViews.AddReviewers.as_view(),name="addReviewers"),
+
 ]

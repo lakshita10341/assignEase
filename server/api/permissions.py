@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from .models import Member, Channels
+from .models import Assignments, Member, Channels
 
 class IsModeratorOrCreator(BasePermission):
     def has_permission(self, request, view):
@@ -22,7 +22,7 @@ class IsModeratorOrCreator(BasePermission):
             return False
         
 
-class IsReviewer(BasePermission):
+class IsCreatorOrReviewer(BasePermission):
     def has_permission(self, request, view):
     
         channel_id=request.data.get('channel_id')
@@ -38,11 +38,22 @@ class IsReviewer(BasePermission):
         try:
           
             member = Member.objects.get(memberName=creator_id,channel_id=channel)
-     
-            print(member.is_admin, member.is_reviewer)
             if member.is_admin:
                 return True
             return member.is_reviewer 
         
         except Member.DoesNotExist:
             return False
+        
+class IsAssignmentReviewer(BasePermission):
+    def has_permission(self, request, view):
+        assignment_id=request.data.get('assignment_id')
+        print(assignment_id)
+        try:
+            assignment=Assignments.objects.get(assignment_id=assignment_id)
+        except Assignments.DoesNotExist:
+            return False
+        is_reviewer = assignment.reviewers_id.filter(memberName=request.user.id).exists()
+        print(is_reviewer)
+        return is_reviewer
+        

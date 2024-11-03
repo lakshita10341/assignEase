@@ -30,7 +30,7 @@ class Member(models.Model):
                models.UniqueConstraint(fields = ['memberName','channel_id'], name = 'channel_member')
           ]    
      def __str__(self):
-          return self.memberName
+          return str(self.memberid)
      
 class Assignments(models.Model):
      assignment_id = models.AutoField(primary_key=True)
@@ -44,7 +44,7 @@ class Assignments(models.Model):
      reviewers_id = models.ManyToManyField(Member, related_name='assignment_reviewers')
      channel_id = models.ForeignKey(Channels,on_delete=models.CASCADE)
      def __str__(self):
-        return self.title if self.title else f"Assignment {self.assignment_id}"
+        return self.title 
 
      
 class Task(models.Model):

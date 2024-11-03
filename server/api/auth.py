@@ -6,8 +6,6 @@ import os
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
-
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET_ID= os.getenv('CLIENT_SECRET_ID')
 redirect_uri='http://127.0.0.1:8000/api/oauth/getToken/'
@@ -17,11 +15,9 @@ getUserDataURL = 'https://channeli.in/open_auth/get_user_data/'
 logout = 'https://channeli.in/open_auth/revoke_token'
 
 def getOAuthUser(request):
-    print('k')
     URL = authoriseURL + '?client_id='+CLIENT_ID+'&redirect_uri='+redirect_uri+'&state=Authorised'
     return redirect(URL)
     
-
 def getOAuthTokens(request):
         OAuthCode = request.GET.get('code') 
         print(CLIENT_ID)
@@ -63,10 +59,7 @@ def getOAuthTokens(request):
                 if User.objects.filter(email=email).exists():
                      user = User.objects.get(email=email)
                      print('User already exists')
-                    #  print(user.access)
-                    #  return user
-                    
-                
+              
                 else:
                     print('creating user')
                     try:

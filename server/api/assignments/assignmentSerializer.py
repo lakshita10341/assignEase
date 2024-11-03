@@ -28,17 +28,20 @@ class AddAssignmentSerializer(serializers.ModelSerializer):
         title = validated_data.get('title')
         description = validated_data.get('description')
         deadline = validated_data.get('deadline')  
+
    
         channel_id = validated_data.get('channel_id')
-        creator_id = Member.objects.get(memberName = user_id)
+        creator_id = Member.objects.get(memberName = user_id,channel_id=channel_id)
+
         assignment = Assignments.objects.create(
             creator_id=creator_id,
             title = title,
             description = description,
             deadline = deadline,  
-           
+            
             channel_id=channel_id,       
         )
+        assignment.reviewers_id.add(creator_id)
         if attachments:
             assignment.attachments = attachments
             assignment.save()
@@ -60,6 +63,18 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ['student_id']
+
+class AddReviewerSerializer(serializers.ModelSerializer):
+    assignment_id = serializers.PrimaryKeyRelatedField(queryset=Assignments.objects.all(), write_only=True)
+    reviewers_id = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Member.objects.all()),
+        write_only=True
+    )
+    class Meta:
+        model=Assignments
+        fields=['assignment_id','reviewers_id']
+    
+    
 
 
 class GroupsSerializer(serializers.ModelSerializer):

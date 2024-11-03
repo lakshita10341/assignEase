@@ -12,7 +12,6 @@ GOOGLE_ACCESS_TOKEN_OBTAIN_URL = 'https://oauth2.googleapis.com/token'
 GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
 LOGIN_URL='http://localhost:5173/'
 
-
 def getUser(request):
     params = {
         'response_type': 'code',
@@ -20,11 +19,8 @@ def getUser(request):
         'redirect_uri': REDIRECT_URI,
        ' prompt': 'select_account',
         'access_type': 'offline',
-        'scope': 'openid email profile'
-        
-  }
-    
-    
+        'scope': 'openid email profile'       
+  }   
     url_params = urlencode(params)
     auth_url = f"{GOOGLE_AUTH_URL}?{url_params}"
     return redirect(auth_url)

@@ -21,6 +21,7 @@ async(error)=>{
     // const navigate = useNavigate();
     const originalrequest = error.config;
     console.log("error occured")
+    console.log(error)
     if(error.response.status===401 && !originalrequest._retry){
         originalrequest._retry = true;
         console.log("getting refresh token")
