@@ -1,10 +1,11 @@
-from tokenize import Comment
 from xml.dom import ValidationErr
 from django.forms import ValidationError
-from requests import Response
+from requests import Request, Response
 from rest_framework import serializers, status
 from ..models import Assignments, Channels, Group, Member, Submission, Comments
 from ..serializers import MemberSerializer, ProfileSerializer
+
+from django.core.mail import send_mail
 
 class AddAssignmentSerializer(serializers.ModelSerializer):
     attachments = serializers.FileField(
@@ -21,7 +22,6 @@ class AddAssignmentSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-
         attachments = validated_data.pop('attachments', None)
         user_id = self.context['request'].user.id
         
@@ -92,12 +92,13 @@ class GroupsSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         Groups = validated_data.get('Group')
         assignment_id = validated_data.get('assignment_id')
-      
+    
         try:
             assignment = Assignments.objects.get(assignment_id=assignment_id.assignment_id)
         except Assignments.DoesNotExist:
             raise ValidationErr({'message': f"Assignment {assignment_id} doesn't exist"})
         created_group=[]
+        student_emails=[]
         for GroupData in Groups:
             students = []
             student_ids = GroupData.get('student_id')
@@ -108,6 +109,8 @@ class GroupsSerializer(serializers.ModelSerializer):
                     if not student_data.is_student:
                         print(f"{student} is not a student")
                     else:
+                        print(student_data.memberName)
+                        student_emails.append(student_data.memberName.email)
                         students.append(student_data)
                 except Member.DoesNotExist:
                     raise serializers.ValidationError({'message': f"Student with {student} doesn't exist"})
@@ -115,6 +118,26 @@ class GroupsSerializer(serializers.ModelSerializer):
             group.student_id.set(students)
             group.save()
             created_group.append(group)  
+        subject = f"New Assignment: "
+        message = (
+        f"Dear Students,\n\n"
+        f"A new assignment has been added. "
+        f"Please check and submit it before the due date.\n\n"
+        f"Best regards,\n"
+    )
+        
+        try:
+      
+            send_mail(
+            subject=subject,
+            message=message,
+            from_email='', 
+            recipient_list=student_emails,  
+            fail_silently=False,
+            )
+            print("Emails sent successfully!")
+        except Exception as e:
+            print(f"Failed to send emails: {e}")
         return created_group
 
 class StudentSerializer(serializers.ModelSerializer):

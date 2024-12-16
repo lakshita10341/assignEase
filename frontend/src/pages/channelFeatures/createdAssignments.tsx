@@ -13,12 +13,9 @@ const CreatedAssignments : React.FC =()=>{
     useEffect(() => {
         const fetchData = async () => {
       
-            if (selectedChannelId) {
-           
-                try {
-               
-                    await dispatch(fetchAssignments(selectedChannelId)).unwrap();
-                   
+            if (selectedChannelId) {           
+                try {       
+                    await dispatch(fetchAssignments(selectedChannelId)).unwrap();           
                 } catch (error) {
                     console.error("Failed to fetch assignments:", error);
                 }
@@ -26,14 +23,8 @@ const CreatedAssignments : React.FC =()=>{
                 console.log("No channel selected")
             }
         };
-   
-        fetchData(); // Call the async function inside useEffect
-      
+           fetchData();       
     }, [dispatch, selectedChannelId]);
-
-    useEffect(() => {
-        console.log("Assignments:", assignments);
-      }, [assignments]); 
 
 
       const navigateToAssignment = (assignmentId:number)=>{

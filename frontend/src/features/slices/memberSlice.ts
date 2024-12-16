@@ -10,8 +10,7 @@ interface MemberData{
 
 interface Member{
     memberid : string,
-    memberName : MemberData,
-   
+    memberName : MemberData,  
     is_moderator : boolean,
     is_admin : boolean,
     is_student : boolean,

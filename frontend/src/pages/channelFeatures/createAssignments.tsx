@@ -6,7 +6,6 @@ import { FileImage } from "lucide-react";
 import {
   Card,
   CardContent,
-
   CardFooter,
   CardHeader,
   CardTitle,
@@ -33,13 +32,9 @@ const CreateAssignment : React.FC = ()=>{
     const toggleCalender = ()=>{
       setShowCalender(!showCalender);
     }
-    // const toggleList = ()=>{
-
-    // }
+ 
     const handleDate = (date: Date | undefined)=>{
-
           setDate(date);
-          console.log(deadline);
           setShowCalender(false);
     }
 
@@ -67,15 +62,12 @@ const CreateAssignment : React.FC = ()=>{
         try{
           const query = {
             channelId: selectedChannelId || "",
-          }
-          console.log(query.channelId)
-       
+          }   
           await dispatch(createAssignment(assignment)).unwrap();
           navigate('/dashboard');
         }catch(err: any){
             setFormError(err)
         }
-  
     }
 
     return (
@@ -125,12 +117,7 @@ const CreateAssignment : React.FC = ()=>{
     />
                   </div>
               )
-            }
-            {/* <div>
-              <div>AddStudents</div>
-              <div onClick={toggleList}>{">"}</div>
-            </div> */}
-            
+            }          
           </div>
           </CardContent>
       <CardFooter className="flex justify-between">
@@ -138,9 +125,7 @@ const CreateAssignment : React.FC = ()=>{
         <Button type='submit' disabled={loading}>Create</Button>
       </CardFooter>
       </form>
-    </Card>
-       
-     
+    </Card>   
                     </div>
                 </div>
             </div>

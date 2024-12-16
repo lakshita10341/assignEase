@@ -39,7 +39,7 @@ class Assignments(models.Model):
      description = models.TextField()
      created_at = models.DateTimeField(auto_now_add=True)
      deadline = models.DateField()
-     attachments = models.FileField(upload_to='assignment_attachments/', null=True)
+     attachments = models.FileField(upload_to='assignments/', null=True)
      is_individual = models.BooleanField(default=True)
      reviewers_id = models.ManyToManyField(Member, related_name='assignment_reviewers')
      channel_id = models.ForeignKey(Channels,on_delete=models.CASCADE)

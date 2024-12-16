@@ -72,9 +72,11 @@ class GetAssignmentAsStudents(generics.ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        member = Member.objects.get(memberName=user)
-        groups = Group.objects.filter(student_id=member)
+        
+        
         channel_id= self.request.query_params.get('channel_id')
+        member = Member.objects.get(memberName=user,channel_id=channel_id)
+        groups = Group.objects.filter(student_id=member)
         if channel_id:
             groups = groups.filter(assignment_id__channel_id=channel_id)
         return groups
@@ -121,7 +123,7 @@ class GetComments(generics.ListAPIView):
         
 class GetAssignedStudents(generics.ListAPIView):
     queryset=Group.objects.all()
-    permission_classes=[IsAuthenticated, IsAssignmentReviewer]
+    permission_classes=[IsAuthenticated]
     serializer_class=GetAssignmentStudents
     def get_queryset(self):
         assignment_id=self.request.query_params.get('assignment_id')
@@ -130,7 +132,7 @@ class GetAssignedStudents(generics.ListAPIView):
 
 class ChangeStatus(generics.UpdateAPIView):
     queryset=Group.objects.all()
-    permission_classes=[IsAuthenticated, IsAssignmentReviewer]
+    permission_classes=[IsAuthenticated]
     serializer_class=ChangeStatusSerializer
     
     def patch(self, request, *args, **kwargs):
