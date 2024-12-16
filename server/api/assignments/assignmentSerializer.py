@@ -22,7 +22,7 @@ class AddAssignmentSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        attachments = validated_data.pop('attachments', None)
+        attachments = validated_data.get('attachments',None)
         user_id = self.context['request'].user.id
         
         title = validated_data.get('title')
@@ -38,13 +38,13 @@ class AddAssignmentSerializer(serializers.ModelSerializer):
             title = title,
             description = description,
             deadline = deadline,  
-            
+            attachments=attachments,
             channel_id=channel_id,       
         )
         assignment.reviewers_id.add(creator_id)
-        if attachments:
-            assignment.attachments = attachments
-            assignment.save()
+        # if attachments:
+        #     assignment.attachments = attachments
+        #     assignment.save()
         return assignment
     
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -120,12 +120,13 @@ class GroupsSerializer(serializers.ModelSerializer):
             created_group.append(group)  
         subject = f"New Assignment: "
         message = (
-        f"Dear Students,\n\n"
-        f"A new assignment has been added. "
-        f"Please check and submit it before the due date.\n\n"
+        f"\n"
+        f"Title : {assignment.title} \n"
+        f"Description : {assignment.description}\n"
+        f"Deadline : {assignment.deadline}\n"
         f"Best regards,\n"
     )
-        
+  
         try:
       
             send_mail(

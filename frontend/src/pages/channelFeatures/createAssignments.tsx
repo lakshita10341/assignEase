@@ -28,6 +28,7 @@ const CreateAssignment : React.FC = ()=>{
     const navigate = useNavigate();
     const {loading, error} = useSelector((state:RootState)=>state.assignments)
     const {selectedChannelId} = useSelector((state:RootState)=>state.selectChannel)
+    const [submissionFile,setSubmissionFile]=useState<File | null>(null);
 
     const toggleCalender = ()=>{
       setShowCalender(!showCalender);
@@ -52,13 +53,15 @@ const CreateAssignment : React.FC = ()=>{
           setFormError("Some error occured")
         }
         setFormError("");
-      
+      console.log(submissionFile)
        const assignment = {
           title,
           description,
           deadline,
+          attachments : submissionFile,
           channel_id : selectedChannelId,         
         }
+        
         try{
           const query = {
             channelId: selectedChannelId || "",
@@ -69,6 +72,12 @@ const CreateAssignment : React.FC = ()=>{
             setFormError(err)
         }
     }
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+          setSubmissionFile(e.target.files[0]);
+      }
+    };
 
     return (
         <>
@@ -100,7 +109,8 @@ const CreateAssignment : React.FC = ()=>{
             </div>
             <div className="flex flex-grow flex-col space-y-1.5">
               <Label htmlFor="Attachments">Attachments</Label>
-              <Input id="attachments" placeholder="Attachments if any " />
+              <input  type="file"
+                                    onChange={handleFileChange}  />
             </div>
             <div className="flex flex-grow flex-col space-y-1.5">
               <Label htmlFor="Deadline">Deadline</Label>

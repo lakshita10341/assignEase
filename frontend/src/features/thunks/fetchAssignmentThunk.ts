@@ -19,7 +19,7 @@ interface Assignment {
     title: string;
     description: string;
     deadline: Date;
-    attachment : null;
+    attachments : string | null;
 }
 
 // Create thunk to fetch assignments

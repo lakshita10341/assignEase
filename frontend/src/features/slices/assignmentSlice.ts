@@ -7,7 +7,7 @@ interface Assignment{
     title : string,
     description : string,
     deadline : Date,
-    attachment: null;
+    attachments: string | null;
 }
 
 interface AssignmentsState{
@@ -30,18 +30,18 @@ const assignmentSlice = createSlice({
     },
     extraReducers: (builder)=>{
         builder
-            .addCase(createAssignment.pending, (state)=>{
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(createAssignment.fulfilled,(state)=>{
-                state.loading = false;
-                state.error = null;
-            })
-            .addCase(createAssignment.rejected,(state,action)=>{
-                state.loading = false;
-                state.error = action.payload || "Something went wrong"
-            })
+            // .addCase(createAssignment.pending, (state)=>{
+            //     state.loading = true;
+            //     state.error = null;
+            // })
+            // .addCase(createAssignment.fulfilled,(state)=>{
+            //     state.loading = false;
+            //     state.error = null;
+            // })
+            // .addCase(createAssignment.rejected,(state,action)=>{
+            //     state.loading = false;
+            //     state.error = action.payload || "Something went wrong"
+            // })
             .addCase(fetchAssignments.pending, (state) => {
                 state.loading = true;
                 state.error = null;

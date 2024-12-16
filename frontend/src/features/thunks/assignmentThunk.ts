@@ -8,8 +8,8 @@ interface assignmentData{
     description: string,
     deadline: Date,
     channel_id : string | null,
+    attachments : File | null,
 }
-
 
 export const createAssignment = createAsyncThunk<
     void,
@@ -19,8 +19,10 @@ export const createAssignment = createAsyncThunk<
     "assignments/createAssignments/",
         async(assignmentData, {rejectWithValue})=>{
             try{
-                console.log(assignmentData.deadline)
-                const response = await api.post(createAssignmentRoute, assignmentData);
+                
+                const response = await api.post(createAssignmentRoute, assignmentData,{headers: {
+                    "Content-Type": "multipart/form-data",
+                }});
                 return response.data;
             }catch(error: any){
                     return rejectWithValue(error.response.data.detail)

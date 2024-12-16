@@ -5,11 +5,14 @@ import React, {  useState } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../../api"
 import Navbar from "@/components/navbar";
+import FileViewer from 'react-file-viewer';
+import CustomErrorComponent from "custom-error";
 interface Assignment{
     assignment_id:number;
     title:string;
     description:string;
     deadline:Date;
+    attachments:string|null,
 }
 
 interface Group{
@@ -36,6 +39,11 @@ const Submissions : React.FC = ()=>{
     const [submissionText, setSubmission] = useState<string>('');
     const [submissionFile,setSubmissionFile]=useState<File | null>(null);
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const [showAttachment, setShowAttachment] = useState(false);
+
+    const handleShowAttachment = () => {
+        setShowAttachment((prevState) => !prevState);
+    };
     const data = {
         assignment_id:group.assignment_id.assignment_id,
         group_id:group.group_id,
@@ -92,6 +100,9 @@ const Submissions : React.FC = ()=>{
             setSubmissionFile(e.target.files[0]);
         }
     };
+    const onFileViewError = (error: any) => {
+        console.error("Error in FileViewer:", error);
+      };
     return(
 
         <>
@@ -102,6 +113,26 @@ const Submissions : React.FC = ()=>{
             <div className="text-bold shadow-md border rounded-md m-2">
                             <h1>{group.assignment_id.title}</h1>
                             <h2>{group.assignment_id.description}</h2>
+                            {
+                group.assignment_id.attachments && (
+                  <div className="flex p-2 justify-start">
+                  <button
+                  className="bg-sky-950 text-white px-4 py-2 rounded-md hover:bg-blue-800"
+                  onClick={handleShowAttachment}
+              >
+                  {showAttachment ? "Hide Attachment" : "Show Attachment"}
+              </button>
+          </div>
+                )
+               }
+            {showAttachment && group.assignment_id.attachments && (
+                 <FileViewer
+                 fileType={group.assignment_id.attachments.split('.').pop() || ''}
+                 filePath={group.assignment_id.attachments}
+                 errorComponent={CustomErrorComponent}
+                 onError={onFileViewError}
+               />
+            )}
                         </div> 
                         {role === "reviewer" ? (
                             <div className="relative">

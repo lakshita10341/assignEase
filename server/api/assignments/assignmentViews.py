@@ -62,7 +62,7 @@ class GetAssignmennts(generics.ListAPIView):
         requestor = self.request.user
         reviewer = Member.objects.get(channel_id=channel_id, memberName = requestor)
         assignments = Assignments.objects.filter(reviewers_id=reviewer)
-       
+        print(assignments)
         return assignments
     
 class GetAssignmentAsStudents(generics.ListAPIView):

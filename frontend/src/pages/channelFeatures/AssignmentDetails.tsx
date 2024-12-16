@@ -8,6 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {UserPlus, View, ClipboardPlus} from 'lucide-react';
 import { fetchMembers } from "@/features/thunks/participantsThunk";
 import { Button } from "@/components/ui/button"
+import FileViewer from 'react-file-viewer';
+import CustomErrorComponent from "custom-error";
 import {
   Dialog,
   DialogContent,
@@ -68,6 +70,11 @@ const AssignmentDetails: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const navigate=useNavigate();
     const [showStudentDialog, setStudentShowDialog] = useState(false);
+    const [showAttachment, setShowAttachment] = useState(false);
+
+    const handleShowAttachment = () => {
+        setShowAttachment((prevState) => !prevState);
+    };
     const { toast } = useToast()
     useEffect(() => {
         if (assignments.length === 0) {
@@ -174,7 +181,10 @@ const AssignmentDetails: React.FC = () => {
           
         });
     };
-
+    const onFileViewError = (error: any) => {
+      console.error("Error in FileViewer:", error);
+    };
+console.log(assignment)
     const fetchAllotedStudents = async()=>{
           const response = await api.get(getAllotedStudents+`?assignment_id=${assignmentId}`)
           console.log(response.data);
@@ -195,6 +205,27 @@ const AssignmentDetails: React.FC = () => {
                         <div className="text-bold shadow-md border rounded-md m-2">
                             <h2>{assignment.description}</h2>
                         </div>
+                        
+               {
+                assignment.attachments && (
+                  <div className="flex p-2 justify-start">
+                  <button
+                  className="bg-sky-950 text-white px-4 py-2 rounded-md hover:bg-blue-800"
+                  onClick={handleShowAttachment}
+              >
+                  {showAttachment ? "Hide Attachment" : "Show Attachment"}
+              </button>
+          </div>
+                )
+               }
+            {showAttachment && assignment.attachments && (
+                 <FileViewer
+                 fileType={assignment.attachments.split('.').pop() || ''}
+                 filePath={assignment.attachments}
+                 errorComponent={CustomErrorComponent}
+                 onError={onFileViewError}
+               />
+            )}
                         <div className="flex p-2 justify-start">
                         <Dialog open={showStudentDialog} >
       <DialogTrigger asChild>
