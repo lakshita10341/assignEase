@@ -54,6 +54,8 @@ class ChannelSerializer(serializers.ModelSerializer):
             channel_id = channel,
             memberName = user,
             is_admin = True,
+            is_reviewer = True,
+            is_moderator = True,
         )
         channel.save()
         print('done')
@@ -63,7 +65,7 @@ class GetMemberDataSerializer(serializers.ModelSerializer):
     memberName = ProfileSerializer(read_only=True)
     class Meta:
         model = Member
-        fields = ['memberName','memberid','is_moderator','is_reviewer','is_student']
+        fields = ['memberName','memberid','is_moderator','is_reviewer','is_student','is_admin']
 
 class MemberDataSerializer(serializers.ModelSerializer):
     memberName = serializers.UUIDField()

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import api from "../../api"
 import { addCommentRoute, getCommentRoute, getSubmission } from '@/routes/route';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
 import FileViewer from 'react-file-viewer';
 import CustomErrorComponent from "custom-error";
+import { fetchSubmissions } from '@/features/thunks/getSubmissionThunk';
 interface DataProps {
     data: {
         group_id: number;
@@ -24,24 +25,29 @@ interface Submission{
     submission_file:string,
 }
 const SubCom : React.FC<DataProps> = ({ data })=>{
-    const [submissions, setSubmissions]=useState<Submission[]>([])
+    const dispatch: AppDispatch = useDispatch();
+    const { submissions, loading, error } = useSelector((state: RootState) => state.submissions);
+  //  const [submission, setSubmissions]=useState<Submission[]>([])
     const { selectedChannelId } = useSelector((state: RootState) => state.selectChannel)
     const [comments, setComments] = useState<{ [key: number]: Comment[] }>({});
     const [comment, setComment] = useState('');
     const [activeSubmissionId, setActiveSubmissionId] = useState<number | null>(null);
     const [showComments, setShowComments] = useState(false);
-    useEffect(()=>{
-           const fetchData = async()=>{
-            try{
-                const response= await api.get(getSubmission, {params : data})
-                setSubmissions(response.data)
-                
-            }catch(err:any){
+    useEffect(() => {
+        dispatch(fetchSubmissions({ data }));
+      }, [dispatch, data]);
+    // useEffect(()=>{
+    //        const fetchData = async()=>{
+    //         try{
+    //             const response= await api.get(getSubmission, {params : data})
+    //             setSubmissions(response.data)
+    //             console.log(response.data)
+    //         }catch(err:any){
 
-            }
-           }
-           fetchData();
-        },[])
+    //         }
+    //        }
+    //        fetchData();
+    //     },[])
         const fetchComments=async(submission_id:number)=>{
             try{
                 const response = await api.get(getCommentRoute+`?submit_id=${submission_id}`)
@@ -91,7 +97,7 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
     return (
         <>
             <div>       
-            {submissions.map((submission) => (
+            {submissions?.map((submission) => (
                     <div
                      key={submission.submission_id}
                       className="p-4 m-4 w-full border rounded-lg shadow-md cursor-pointer hover:bg-gray-100"

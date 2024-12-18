@@ -2,7 +2,7 @@ import DashBoardComponents from "@/components/dashBoardComponents";
 import Navbar from "@/components/navbar";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button"
-import { FileImage } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { createAssignment } from "@/features/thunks/assignmentThunk";
 import { useNavigate } from "react-router-dom";
+import { toast,ToastContainer } from "react-toastify";
 const CreateAssignment : React.FC = ()=>{
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -53,7 +54,7 @@ const CreateAssignment : React.FC = ()=>{
           setFormError("Some error occured")
         }
         setFormError("");
-      console.log(submissionFile)
+   
        const assignment = {
           title,
           description,
@@ -67,6 +68,7 @@ const CreateAssignment : React.FC = ()=>{
             channelId: selectedChannelId || "",
           }   
           await dispatch(createAssignment(assignment)).unwrap();
+          toast.success("Assignment Added Successfully")
           navigate('/dashboard');
         }catch(err: any){
             setFormError(err)
@@ -138,6 +140,7 @@ const CreateAssignment : React.FC = ()=>{
     </Card>   
                     </div>
                 </div>
+                <ToastContainer position="top-right" autoClose={3000} />
             </div>
         </>
     );
