@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {UserPlus, View, ClipboardPlus} from 'lucide-react';
+import {UserPlus, View} from 'lucide-react';
 import { fetchMembers } from "@/features/thunks/participantsThunk";
 import { Button } from "@/components/ui/button"
 import FileViewer from 'react-file-viewer';
@@ -20,12 +20,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { toast } from "@/hooks/use-toast"
-import { useToast } from "@/hooks/use-toast"
-
-
-
-
 
 
 import { Checkbox } from "@/components/ui/checkbox"
@@ -40,6 +34,7 @@ import {
 } from "@/components/ui/form"
 import { addReviewersRoute, addStudentRoute, getAllotedStudents } from "@/routes/route";
 import api from "../../../api";
+import { toast, ToastContainer } from "react-toastify";
 
 const FormSchema = z.object({
     students: z.array(z.string()).refine((value) => value.length > 0, {
@@ -71,11 +66,11 @@ const AssignmentDetails: React.FC = () => {
     const navigate=useNavigate();
     const [showStudentDialog, setStudentShowDialog] = useState(false);
     const [showAttachment, setShowAttachment] = useState(false);
-
+    const [showDialog, setShowDialog] = useState(false);
     const handleShowAttachment = () => {
         setShowAttachment((prevState) => !prevState);
     };
-    const { toast } = useToast()
+  
     useEffect(() => {
         if (assignments.length === 0) {
             dispatch(fetchAssignments(selectedChannelId)); 
@@ -133,16 +128,18 @@ const AssignmentDetails: React.FC = () => {
   }
 
   const addReviewers=async(data: z.infer<typeof ReviewerFormSchema>)=>{
-      const payload = {
+    setShowDialog(false); 
+    const payload = {
         assignment_id:numericAssignmentId,
         reviewers_id:data.reviewers,
       }
       console.log(data)
       try{
         const response = await api.post(`${addReviewersRoute}?channel_id=${selectedChannelId}`,payload)
-       
-       
+        
+        toast.success("Reviewers added successfully!");
       }catch(err){
+        
         console.error(err);
       }
      
@@ -159,6 +156,7 @@ const AssignmentDetails: React.FC = () => {
       navigate('/dashboard/submissions/', { state: { group,role } });
     };
     const onSubmit = async(data: z.infer<typeof FormSchema>)=>{
+      setStudentShowDialog(false);
           try{
             const studentsData = {
               assignment_id : numericAssignmentId,
@@ -168,18 +166,13 @@ const AssignmentDetails: React.FC = () => {
               })
             ),
             };
-            console.log(studentsData)
+           
             const response = await api.post(addStudentRoute, studentsData)
-            console.log(response.data)
+            toast.success("Students added successfully!");
           }catch(err){
             console.log(err)
           }
-          setStudentShowDialog(false);
-          toast({
-            title: "Success",
-            description: "Student added successfully!",
-          
-        });
+         
     };
     const onFileViewError = (error: any) => {
       console.error("Error in FileViewer:", error);
@@ -187,7 +180,7 @@ const AssignmentDetails: React.FC = () => {
 console.log(assignment)
     const fetchAllotedStudents = async()=>{
           const response = await api.get(getAllotedStudents+`?assignment_id=${assignmentId}`)
-          console.log(response.data);
+         
           setAllotedStudents(response.data);
     }
     return (
@@ -227,9 +220,9 @@ console.log(assignment)
                />
             )}
                         <div className="flex p-2 justify-start">
-                        <Dialog open={showStudentDialog} >
+                        <Dialog open={showStudentDialog} onOpenChange={setStudentShowDialog} >
       <DialogTrigger asChild>
-        <UserPlus onClick={()=>setStudentShowDialog(true)}/>
+        <UserPlus />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
       <Form {...form}>
@@ -301,7 +294,7 @@ console.log(assignment)
           }
       </DialogContent>
     </Dialog>
-    <Dialog>
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogTrigger asChild>
         <UserPlus onClick={fetchReviewers}/>
       </DialogTrigger>
@@ -365,6 +358,7 @@ console.log(assignment)
                         </div>
                     </div>
                 </div>
+                <ToastContainer position="top-right" autoClose={3000} />
             </div>
           
         </>

@@ -7,6 +7,10 @@ import api from "../../../api"
 import Navbar from "@/components/navbar";
 import FileViewer from 'react-file-viewer';
 import CustomErrorComponent from "custom-error";
+import { getSubmission } from "@/routes/route";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSubmissions } from "../../features/thunks/getSubmissionThunk"; // Path to the thunk
+import { AppDispatch, RootState } from "../../redux/store";
 interface Assignment{
     assignment_id:number;
     title:string;
@@ -32,6 +36,7 @@ const STATUS_MAPPING :Record<number, string>= {
 };
 
 const Submissions : React.FC = ()=>{
+    const dispatch: AppDispatch = useDispatch();
    
     const location = useLocation();
     const { group,role } = location.state as LocationState || {}; 
@@ -90,7 +95,7 @@ const Submissions : React.FC = ()=>{
             setSubmissionFile(null);
 
             setSubmission('');
-            console.log(response.data);
+            dispatch(fetchSubmissions({data}));
         } catch (error) {
             console.error("Failed to submit:", error);
         }
@@ -172,7 +177,7 @@ const Submissions : React.FC = ()=>{
                                     onChange={handleFileChange}
                                     className="mt-2"
                                 />
-                        <button className="btn mt-2 p-2 bg-green-500 text-white" type='submit'>Submit Submission</button>
+                        <button className="btn mt-2 p-2 bg-sky-950 text-white" type='submit'>Submit Submission</button>
                         </div>
                         </form>
                     </>
