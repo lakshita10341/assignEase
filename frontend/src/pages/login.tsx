@@ -22,7 +22,6 @@ const Login : React.FC=()=>{
     const [password,setPassword] = useState('')
     const [formError, setFormError] = useState('')
     const dispatch: AppDispatch = useDispatch();
-
 const {loading, error} = useSelector((state: RootState)=> state.userReducer);
     useEffect(()=>{
       Cookies.remove('access_token')
@@ -70,7 +69,7 @@ const {loading, error} = useSelector((state: RootState)=> state.userReducer);
 
         <div className="h-1/2 "></div>
         <Card>
- <CardTitle>Create your account </CardTitle>
+ <CardTitle>Login into your account </CardTitle>
   <CardContent>
     <form onSubmit={handleSubmit}>
      {formError && (<div className="text-red-500">{formError}</div>)}
@@ -91,7 +90,7 @@ const {loading, error} = useSelector((state: RootState)=> state.userReducer);
             <Input id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="col-span-3" />
           </div>
          
-        <Button type='submit' disabled={loading} >Create</Button>
+        <Button type='submit' disabled={loading} >LogIn</Button>
      
         </form>
         <div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import api from "../../api"
-import { addCommentRoute, getCommentRoute, getSubmission } from '@/routes/route';
+import { addCommentRoute, getCommentRoute } from '@/routes/route';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import FileViewer from 'react-file-viewer';
@@ -18,12 +18,12 @@ interface Comment{
     reviewer_id:string,
     submit_id:number,
 }
-interface Submission{
-    submission_id:number,
-    submission_text:string,
-    submit_date:Date,
-    submission_file:string,
-}
+// interface Submission{
+//     submission_id:number,
+//     submission_text:string,
+//     submit_date:Date,
+//     submission_file:string,
+// }
 const SubCom : React.FC<DataProps> = ({ data })=>{
     const dispatch: AppDispatch = useDispatch();
     const { submissions, loading, error } = useSelector((state: RootState) => state.submissions);
