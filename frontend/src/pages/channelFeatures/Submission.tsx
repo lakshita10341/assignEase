@@ -1,7 +1,7 @@
 import SubCom from "@/components/SubCom";
 
 import { changeStatus, submissionRoute } from "@/routes/route";
-import React, {  useState } from "react";
+import React, {  useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../../api"
 import Navbar from "@/components/navbar";
@@ -45,15 +45,39 @@ const Submissions : React.FC = ()=>{
     const [submissionFile,setSubmissionFile]=useState<File | null>(null);
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     const [showAttachment, setShowAttachment] = useState(false);
-
-    const handleShowAttachment = () => {
-        setShowAttachment((prevState) => !prevState);
-    };
+    const socketRef = useRef<WebSocket | null>(null);
     const data = {
         assignment_id:group.assignment_id.assignment_id,
         group_id:group.group_id,
         role:role,
     }
+  useEffect(() => {
+    // Connect to the WebSocket
+    const socket = new WebSocket(`ws://127.0.0.1:8000/ws/submissions/${data.group_id}/`);
+
+    socketRef.current = socket;
+
+
+    socket.onmessage = (event) => {
+      const msgdata = JSON.parse(event.data);
+      if (msgdata.message === "assignment_submitted") {
+        dispatch(fetchSubmissions({data}));
+        
+      }
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket closed");
+    };
+    return () => {
+     
+        socket.close();
+      };
+    }, [data.group_id, dispatch]);
+    const handleShowAttachment = () => {
+        setShowAttachment((prevState) => !prevState);
+    };
+   
     const toggleDropdown = () => setStatusDropdownOpen(!statusDropdownOpen);
 
     const handleStatusChange = async (newStatus:number) => {
@@ -68,7 +92,7 @@ const Submissions : React.FC = ()=>{
                 
                 setStatus(newStatus);
                 setStatusDropdownOpen(false);
-                console.log("Status updated successfully:", response.data);
+               
             } else {
                 console.error("Failed to update status. Server responded with:", response.status);
             }
@@ -96,6 +120,13 @@ const Submissions : React.FC = ()=>{
 
             setSubmission('');
             dispatch(fetchSubmissions({data}));
+            if (socketRef.current) {
+                socketRef.current.send(
+                  JSON.stringify({
+                    message: "assignment_submitted",
+                  })
+                );
+              }
         } catch (error) {
             console.error("Failed to submit:", error);
         }

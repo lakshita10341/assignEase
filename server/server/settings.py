@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'channels',
+    'daphne',
     # "django.contrib.sites",
     # 'allauth',
     # 'allauth.account',
@@ -58,6 +60,8 @@ INSTALLED_APPS = [
 
 ]
 
+ASGI_APPLICATION = 'server.asgi.application'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -65,7 +69,11 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # SOCIALACCOUNT_PROVIDERS ={
 #     "google":{

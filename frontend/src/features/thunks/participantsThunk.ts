@@ -19,7 +19,7 @@ interface channel{
 export const addMembers = createAsyncThunk(
     'members/addMembers',
     async(memberData : AddMemberPayload)=>{
-        console.log(memberData)
+     
         const response = await api.post(addMemberRoute, memberData)
         return response.data;
     }
@@ -29,7 +29,7 @@ export const fetchMembers = createAsyncThunk(
     'members/addMembers/',
     async(channelData : channel)=>{
             const response = await api.get(`${getMemberRoute}?channel_id=${channelData.channel_id}` );
-            console.log(response.data)
+      
             return response.data;
     }
 )

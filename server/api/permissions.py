@@ -4,7 +4,6 @@ from .models import Assignments, Member, Channels
 class IsModeratorOrCreator(BasePermission):
     def has_permission(self, request, view):
         channel_id = request.data.get('channel_id')
-        print(request)
         if not channel_id:
             return False
         try:
@@ -48,12 +47,10 @@ class IsCreatorOrReviewer(BasePermission):
 class IsAssignmentReviewer(BasePermission):
     def has_permission(self, request, view):
         assignment_id=request.data.get('assignment_id')
-        print(assignment_id)
         try:
             assignment=Assignments.objects.get(assignment_id=assignment_id)
         except Assignments.DoesNotExist:
             return False
         is_reviewer = assignment.reviewers_id.filter(memberName=request.user.id).exists()
-        print(is_reviewer)
         return is_reviewer
         

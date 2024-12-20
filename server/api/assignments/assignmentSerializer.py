@@ -168,7 +168,7 @@ class SubmitAssignmentSerializer(serializers.ModelSerializer):
 class GetCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Comments
-        fields=['c_id','submit_id','comment','reviewer_id','reviewer_date']
+        fields=['comment']
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

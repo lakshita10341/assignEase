@@ -26,7 +26,6 @@ export const fetchSubmissions = createAsyncThunk<
     async ({data}, { rejectWithValue }) => {
         try {
             const response = await api.get(getSubmission,{params : data});
-            console.log(response.data);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.detail || "Failed to fetch submissions");

@@ -35,7 +35,7 @@ const AllotedAssignments : React.FC = ()=>{
     const notSubmitted = assignments.filter(assignments=>assignments.status==='1')
     const underIterations = assignments.filter(assignments=>assignments.status==='2')
     const completed = assignments.filter(assignments=>assignments.status==='3')
-    console.log(notSubmitted)
+  
 
     const handleNavigate = async (group: any) => {
       const role="student"

@@ -20,11 +20,8 @@ api.interceptors.response.use((response)=>{
 async(error)=>{
     // const navigate = useNavigate();
     const originalrequest = error.config;
-    console.log("error occured")
-    console.log(error)
     if(error.response.status===401 && !originalrequest._retry){
         originalrequest._retry = true;
-        console.log("getting refresh token")
         const refreshToken = Cookies.get('refresh_token');
         console.log(refreshToken)
         if(refreshToken){
@@ -32,12 +29,11 @@ async(error)=>{
                 const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {refresh : refreshToken});
                 const newAccessToken = response.data.access;
                 Cookies.set('access_token',newAccessToken,{expires:7});
-                console.log("new",newAccessToken)
                 originalrequest.headers.Authorization = `Bearer ${newAccessToken}`
                 return axios(originalrequest);
 
             }catch(error){
-                console.log(error);
+
                 Cookies.remove('access_token')
                 Cookies.remove('refresh_token')
                 // navigate('/login');
