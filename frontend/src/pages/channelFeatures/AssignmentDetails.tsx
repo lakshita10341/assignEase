@@ -120,12 +120,7 @@ const AssignmentDetails: React.FC = () => {
         return <p>No assignment found for ID: {assignmentId}</p>;
     }
    
-    const fetchReviewers = async()=>{
-
-     
-   
-      
-  }
+  
 
   const addReviewers=async(data: z.infer<typeof ReviewerFormSchema>)=>{
     setShowDialog(false); 
@@ -133,7 +128,7 @@ const AssignmentDetails: React.FC = () => {
         assignment_id:numericAssignmentId,
         reviewers_id:data.reviewers,
       }
-      console.log(data)
+    
       try{
         const response = await api.post(`${addReviewersRoute}?channel_id=${selectedChannelId}`,payload)
         
@@ -152,7 +147,6 @@ const AssignmentDetails: React.FC = () => {
         assignment_id:student.assignment_id,
         status:student.status,
       }
-      console.log(group)
       navigate('/dashboard/submissions/', { state: { group,role } });
     };
     const onSubmit = async(data: z.infer<typeof FormSchema>)=>{
@@ -296,7 +290,7 @@ console.log(assignment)
     </Dialog>
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogTrigger asChild>
-        <UserPlus onClick={fetchReviewers}/>
+        <UserPlus />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
       <Form {...reviewerForm}>

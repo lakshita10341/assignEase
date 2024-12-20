@@ -11,7 +11,7 @@ const ProtectedRoute : React.FC<ProtectedRouteProps>=({children})=>{
   useEffect(()=>{
     const auth = async()=>{
       const token = Cookies.get('access_token')
-      console.log(token);
+
       if(!token){
         setIsAuthorized(false);
         return;

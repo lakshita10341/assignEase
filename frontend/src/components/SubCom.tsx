@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import api from "../../api"
 import { addCommentRoute, getCommentRoute } from '@/routes/route';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '@/redux/store';
 import FileViewer from 'react-file-viewer';
 import CustomErrorComponent from "custom-error";
 import { fetchSubmissions } from '@/features/thunks/getSubmissionThunk';
+
 interface DataProps {
     data: {
         group_id: number;
@@ -13,11 +14,16 @@ interface DataProps {
         role:string;
     };
 }
-interface Comment{
+// interface Comment{
+//     comment:string,
+//     reviewer_id:string,
+//     submit_id:number,
+// }
+interface Cmt{
     comment:string,
-    reviewer_id:string,
-    submit_id:number,
+    
 }
+
 // interface Submission{
 //     submission_id:number,
 //     submission_text:string,
@@ -29,35 +35,45 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
     const { submissions, loading, error } = useSelector((state: RootState) => state.submissions);
   //  const [submission, setSubmissions]=useState<Submission[]>([])
     const { selectedChannelId } = useSelector((state: RootState) => state.selectChannel)
-    const [comments, setComments] = useState<{ [key: number]: Comment[] }>({});
+    const [comments, setComments] = useState<Cmt[]>([]);
     const [comment, setComment] = useState('');
     const [activeSubmissionId, setActiveSubmissionId] = useState<number | null>(null);
     const [showComments, setShowComments] = useState(false);
+    const socketRef = useRef<WebSocket | null >(null)
     useEffect(() => {
         dispatch(fetchSubmissions({ data }));
       }, [dispatch, data]);
-    // useEffect(()=>{
-    //        const fetchData = async()=>{
-    //         try{
-    //             const response= await api.get(getSubmission, {params : data})
-    //             setSubmissions(response.data)
-    //             console.log(response.data)
-    //         }catch(err:any){
+ 
+      useEffect(()=>{
+        if(!activeSubmissionId) return;
+        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/comments/${activeSubmissionId}/`);
+        socketRef.current=socket;
+        socket.onopen = () => {
+            console.log("WebSocket connection opened");
+        };
+        
+        socket.onmessage=(event)=>{
+            const cmt= JSON.parse(event.data)
+            console.log(cmt)
+            const newCmt = cmt.comment
+                setComments((prevComments)=>[...prevComments,{comment:newCmt}]);
+        }
+        return () => {
+            socket.close();
+        };
+      },[activeSubmissionId])
 
-    //         }
-    //        }
-    //        fetchData();
-    //     },[])
         const fetchComments=async(submission_id:number)=>{
             try{
                 const response = await api.get(getCommentRoute+`?submit_id=${submission_id}`)
-                console.log(response.data)
-                setComments((prevComments) => ({
-                    ...prevComments,
-                    [submission_id]: response.data
-                }));
+        
+                setComments(
+                    response.data
+            );
+       
                 setActiveSubmissionId(submission_id);
                 setShowComments(true); 
+              
             }catch(err:any){
                 console.error("Failed to fetch comments:", err);
             }
@@ -73,7 +89,7 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 console.log("comment can't be empty");
                 return;
             }
-            console.log(selectedChannelId)
+           
             const Comment ={
                 submit_id:submission_id,
                 comment:comment,
@@ -84,8 +100,16 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 const response = await api.post(`${addCommentRoute}?channel_id=${selectedChannelId}`, Comment);
                 console.log(response.data);
                 setComment('');
-                setActiveSubmissionId(null); 
                 fetchComments(submission_id);
+                setActiveSubmissionId(submission_id); 
+               
+                
+                if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+                    socketRef.current.send(JSON.stringify({ comment: comment }));
+                    console.log("Comment sent via WebSocket");
+                } else {
+                    console.error("WebSocket is not open, cannot send comment");
+                }
             } catch (error) {
                 console.error("Failed to COMMENT:", error);
             }
@@ -146,8 +170,8 @@ const SubCom : React.FC<DataProps> = ({ data })=>{
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg">
                         <h2 className="text-xl font-semibold mb-4">Comments</h2>
-                        {activeSubmissionId && comments[activeSubmissionId]?.length > 0 ? (
-                            comments[activeSubmissionId].map((comment, index) => (
+                        {activeSubmissionId && comments?.length > 0 ? (
+                            comments.map((comment, index) => (
                                 <p key={index} className="mb-2">
                                     {comment.comment}
                                 </p>
