@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from '@/redux/store';
 import FileViewer from 'react-file-viewer';
 import CustomErrorComponent from "custom-error";
 import { fetchSubmissions } from '@/features/thunks/getSubmissionThunk';
-
+//
 interface DataProps {
     data: {
         group_id: number;

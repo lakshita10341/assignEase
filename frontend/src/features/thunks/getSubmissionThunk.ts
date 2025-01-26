@@ -8,6 +8,7 @@ interface Submission {
     submission_file: string | null;
     submit_date: string;  
 }
+
 interface DataProps {
     data: {
         group_id: number;
@@ -15,7 +16,6 @@ interface DataProps {
         role:string;
     };
 }
-
 
 export const fetchSubmissions = createAsyncThunk<
     Submission[],       
