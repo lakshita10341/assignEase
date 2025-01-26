@@ -39,6 +39,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 SITE_ID = 2
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,7 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'channels',
-    'daphne',
+    
     # "django.contrib.sites",
     # 'allauth',
     # 'allauth.account',
@@ -142,11 +143,11 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('NAME'),
         'USER': os.getenv('USER'),
         'PASSWORD': os.getenv('PASSWORD'),
-        'HOST':'localhost',
+        'HOST':'postgres',
         'PORT':'5432',
     }
 }
